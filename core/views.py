@@ -7,11 +7,13 @@ from django.http import JsonResponse
 from .forms import UserRegisterForm
 from django.views.generic import CreateView
 
+
 def home(request):
     count = User.objects.count()
     return render(request, 'core/home.html', {
         'count': count
     })
+
 
 class SignUpView(CreateView):
     template_name = 'registration/signup.html'
@@ -19,6 +21,7 @@ class SignUpView(CreateView):
     
     def get_success_url(self):
          return reverse('login')
+
 
 def validate_username(request):
     username = request.GET.get('username', None)

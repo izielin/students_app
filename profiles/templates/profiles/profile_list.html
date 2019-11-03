@@ -1,0 +1,37 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Human Resources Module{% endblock %}
+
+{% block content %}
+  <h2>Human Resources Module » People Management</h2>
+
+  <p>
+    <a href="{% url 'profile_add' %}">Add profile</a>
+  </p>
+
+  <table border="1">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Birthdate</th>
+        <th>Country</th>
+        <th>City</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for profile in profiles %}
+        <tr>
+          <td><a href="{% url 'profile_change' profile.pk %}">{{ profile.first_name }} {{ profile.last_name }}</a></td>
+          <td>{{ profile.birthdate }}</td>
+          <td>{{ profile.country.name }}</td>
+          <td>{{ profile.city.name }}</td>
+        </tr>
+      {% empty %}
+        <tr>
+          <td colspan="4">No profile in the database. <a href="{% url 'profile_add' %}">Add the first profile</a>.</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+{% endblock %}
