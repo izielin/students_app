@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect,reverse
+from django.shortcuts import render, reverse
 from django.contrib.auth.decorators import login_required
 from django.views.generic import TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -6,13 +6,12 @@ from django.contrib.auth.models import User
 from django.http import JsonResponse
 from .forms import UserRegisterForm
 from django.views.generic import CreateView
+from profiles.models import Profile
 
 
 def home(request):
     count = User.objects.count()
-    return render(request, 'core/home.html', {
-        'count': count
-    })
+    return render(request, 'core/home.html', {'count': count})
 
 
 class SignUpView(CreateView):

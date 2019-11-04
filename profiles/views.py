@@ -1,7 +1,8 @@
+from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.views.generic import ListView, CreateView, UpdateView
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from .models import Profile, City
 from .forms import ProfileForm
 
@@ -32,3 +33,11 @@ def load_cities(request):
     country_id = request.GET.get('country')
     cities = City.objects.filter(country_id=country_id).order_by('name')
     return render(request, 'profiles/city_dropdown_list_options.html', {'cities': cities})
+
+
+@login_required
+def profile(request):
+    if Profile.objects.filter(user=request.user.id).count() == 1:
+        return render(request, 'profiles/profile.html')
+    else:
+        return HttpResponseRedirect('add')
