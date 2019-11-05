@@ -1,5 +1,5 @@
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, Http404
 from django.shortcuts import render
 from django.views.generic import ListView, CreateView, UpdateView
 from django.urls import reverse_lazy, reverse
@@ -27,6 +27,16 @@ class ProfileUpdateView(UpdateView):
     fields = ('first_name', 'last_name', 'birthdate', 'email',
               'website', 'country', 'city', 'year', 'picture')
     success_url = reverse_lazy('profile_changelist')
+
+    def get(self, request, *args, **kwargs):
+        if not request.user.id == self.kwargs.get('pk'):
+            return render(request, 'profiles/404.html')
+        return super().get(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        if not request.user.id == self.kwargs.get('pk'):
+            return render(request, 'profiles/404.html')
+        return super().post(request, *args, **kwargs)
 
 
 def load_cities(request):
