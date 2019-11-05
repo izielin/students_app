@@ -31,7 +31,7 @@ class Profile(models.Model):
     first_name = models.CharField(max_length=100, null=True)
     last_name = models.CharField(max_length=100, null=True)
     birthdate = models.DateField(null=True, blank=True)
-    picture = models.ImageField(null=True, blank=True)
+    picture = models.ImageField(default='default.jpg', upload_to='profile_pics')
     website = models.URLField(max_length=100, null=True, blank=True)
     email = models.EmailField(max_length=100, null=True)
     country = models.ForeignKey(Country, on_delete=models.SET_NULL, null=True)
@@ -50,4 +50,4 @@ class Profile(models.Model):
         elif self.first_name and self.last_name:
             return self.first_name + ' ' + self.last_name
         else:
-            return 'Student' + ' ' + self.user.id
+            return 'Student' + ' ' + str(self.user.id)

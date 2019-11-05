@@ -1,51 +1,84 @@
-#notfound .notfound {
-  position: absolute;
-  left: 50%;
-  top: 30%;
-  -webkit-transform: translate(-50%, -50%);
-      -ms-transform: translate(-50%, -50%);
-          transform: translate(-50%, -50%);
+body {
+  background: #fafafa;
+  color: #333333;
+  margin-top: 5rem;
 }
 
-.notfound {
-  max-width: 767px;
-  width: 100%;
-  line-height: 1.4;
-  padding: 110px 40px;
-  text-align: center;
-  background: #fff;
+h1, h2, h3, h4, h5, h6 {
+  color: #444444;
 }
 
-.notfound .notfound-404 {
-  position: relative;
-  height: 180px;
+ul {
+  margin: 0;
 }
 
-.notfound .notfound-404 h1 {
-  font-family: 'Roboto', sans-serif;
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  -webkit-transform: translate(-50%, -50%);
-      -ms-transform: translate(-50%, -50%);
-          transform: translate(-50%, -50%);
-  font-size: 165px;
-  font-weight: 700;
-  margin: 0px;
-  color: #262626;
-  text-transform: uppercase;
+.bg-steel {
+  background-color: #5f788a;
 }
 
-.notfound .notfound-404 h1>span {
-  color: #00b7ff;
+.site-header .navbar-nav .nav-link {
+  color: #cbd5db;
 }
 
-.notfound h2 {
-  font-family: 'Roboto', sans-serif;
-  font-size: 22px;
-  font-weight: 400;
-  text-transform: uppercase;
-  color: #151515;
-  margin-top: 0px;
-  margin-bottom: 25px;
+.site-header .navbar-nav .nav-link:hover {
+  color: #ffffff;
+}
+
+.site-header .navbar-nav .nav-link.active {
+  font-weight: 500;
+}
+
+.content-section {
+  background: #ffffff;
+  padding: 10px 20px;
+  border: 1px solid #dddddd;
+  border-radius: 3px;
+  margin-bottom: 20px;
+}
+
+.article-title {
+  color: #444444;
+}
+
+a.article-title:hover {
+  color: #428bca;
+  text-decoration: none;
+}
+
+.article-content {
+  white-space: pre-line;
+}
+
+.article-img {
+  height: 65px;
+  width: 65px;
+  margin-right: 16px;
+}
+
+.article-metadata {
+  padding-bottom: 1px;
+  margin-bottom: 4px;
+  border-bottom: 1px solid #e3e3e3
+}
+
+.article-metadata a:hover {
+  color: #333;
+  text-decoration: none;
+}
+
+.article-svg {
+  width: 25px;
+  height: 25px;
+  vertical-align: middle;
+}
+
+.account-img {
+  height: 125px;
+  width: 125px;
+  margin-right: 20px;
+  margin-bottom: 16px;
+}
+
+.account-heading {
+  font-size: 2.5rem;
 }

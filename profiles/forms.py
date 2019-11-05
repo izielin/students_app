@@ -6,7 +6,7 @@ class ProfileForm(forms.ModelForm):
     class Meta:
         model = Profile
         fields = ('first_name', 'last_name', 'birthdate',
-                  'website', 'country', 'city', 'year', 'picture')
+                  'website', 'country', 'city', 'year')
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

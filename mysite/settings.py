@@ -23,9 +23,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = '3=m)w@4b%1x7jbosaek8r7$%-4vj370$)=y7b+nig^g002qqdo'
 
 # SECURITY WARNING: don't run with debug turned on in production!
+# DEBUG = False -> custom 404 site
 DEBUG = True
-
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1']
 
 
 # Application definition
@@ -59,9 +59,7 @@ ROOT_URLCONF = 'mysite.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [
-            os.path.join(BASE_DIR, 'mysite/templates'),
-        ],
+        'DIRS': [os.path.join(BASE_DIR, 'mysite/templates'),],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
