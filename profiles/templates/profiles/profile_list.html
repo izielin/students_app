@@ -3,6 +3,8 @@
 {% block title %}Profiles Module{% endblock %}
 
 {% block content %}
+
+
   <h2>Profiles Module</h2>
 
   <p>
@@ -30,10 +32,56 @@
         </tr>
       {% empty %}
         <tr>
-          <td colspan="4">No profile in the database. <a href="{% url 'profile_add' %}">Add the first profile</a>.</td>
+          <td colspan="4">No profile in the database. <a href="{% url 'profile_add' %}">Add a profile</a>.</td>
         </tr>
       {% endfor %}
     </tbody>
   </table>
+
+        {% if profiles.has_other_pages %}
+
+        {% if profiles.has_previous %}
+                <a class="btn btn-outline-info mb-4" href="?page=1">First</a>
+                <a class="btn btn-outline-info mb-4" href="?page=
+                    {{ profiles.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">Previous</a>
+        {% endif %}
+
+
+        {% for num in profiles.paginator.page_range %}
+            {% if profiles.number == num %}
+                <a class="btn btn-info mb-4" href="?page={{ num }}">{{ num }}</a>
+            {% elif num > profiles.number|add:'-3' and num < profiles.number|add:'3' %}
+                <a class="btn btn-outline-info mb-4"
+                   href="?page={{ num }}">{{ num }}</a>
+            {% endif %}
+        {% endfor %}
+
+
+        {% if profiles.has_next %}
+            <a class="btn btn-outline-info mb-4" href="?page=
+                {{ profiles.next_page_number }}">Next</a>
+            <a class="btn btn-outline-info mb-4" href="?page=
+                {{ profiles.paginator.num_pages }}">Last</a>
+        {% endif %}
+{% endif %}
+
+{% endblock %}
+{% block sidebar %}
+
+  <div class="content-section">
+    <h3>Our Sidebar</h3>
+    <p class='text-muted'>You can put any information here you'd like.
+      <ul class="list-group">
+            <form method="GET" style="margin: auto;">
+                <div class="input-field">
+                    <div class="row">
+                        <input type="text" name="q" value="{{ request.GET.q }}" placeholder="Wyszukaj" style="width: 80%;">
+                        <button class="btn btn-light" type="submit" name="action"><i class="fas fa-search"></i></button>
+                    </div>
+                </div>
+            </form>
+      </ul>
+    </p>
+  </div>
 
 {% endblock %}
