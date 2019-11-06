@@ -7,7 +7,7 @@
       <div class="card">
         <div class="card-body">
           <h2>Create your Profile</h2>
-            <form method="post" enctype="multipart/form-data" id="personForm" data-cities-url="{% url 'ajax_load_cities' %}" novalidate>
+            <form method="post" enctype="multipart/form-data" id="profileForm" data-cities-url="{% url 'ajax_load_cities' %}" novalidate>
             {% csrf_token %}
             <table>
               {{ form|crispy }}
@@ -25,7 +25,7 @@
   <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
   <script>
     $("#id_country").change(function () {
-      var url = $("#personForm").attr("data-cities-url");
+      var url = $("#profileForm").attr("data-cities-url");
       var countryId = $(this).val();
 
       $.ajax({
