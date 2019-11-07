@@ -40,6 +40,7 @@ class ProfileCreateView(CreateView):
 
     def form_valid(self, form, **kwargs):
         form.instance.user = self.request.user
+        form.instance.email = self.request.user.email
         return super().form_valid(form)
 
 
@@ -72,11 +73,11 @@ def load_cities(request):
 
 @login_required
 def profile(request, pk):
-    profile_data = Profile.objects.get(user=pk)
-    context = {
-        'profile': profile_data,
-    }
     if Profile.objects.filter(user=request.user.id).count() == 1:
+        profile_data = Profile.objects.get(user=pk)
+        context = {
+            'profile': profile_data,
+        }
         return render(request, 'profiles/profile.html', context)
     else:
         return HttpResponseRedirect('add')
