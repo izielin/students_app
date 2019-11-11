@@ -62,10 +62,9 @@ class CourseCreateView(CreateView):
     form_class = CourseForm
     success_url = reverse_lazy('project')
 
-    # def form_valid(self, form, **kwargs):
-    #     form.instance.project = get_object_or_404(Project, pk=self.kwargs.get('pk'))
-    #     print(form.instance.project)
-    #     return super().form_valid(form)
+    def form_valid(self, form, **kwargs):
+        form.instance.project = Project.object.get(id=pk)
+        return super().form_valid(form)
 
     def get_success_url(self):
         pk = self.object.project.pk

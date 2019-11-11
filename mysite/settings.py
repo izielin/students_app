@@ -139,3 +139,6 @@ EMAIL_HOST_USER = 'ecg.vot@gmail.com'
 EMAIL_HOST_PASSWORD = 'ecg.VOT.019'
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
+
+
+AUTHENTICATION_BACKENDS = ('core.backends.CaseInsensitiveModelBackend', )
