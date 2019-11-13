@@ -41,6 +41,7 @@ class ProfileCreateView(CreateView):
     def form_valid(self, form, **kwargs):
         form.instance.user = self.request.user
         form.instance.email = self.request.user.email
+
         return super().form_valid(form)
 
 

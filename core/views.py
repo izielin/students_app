@@ -2,11 +2,11 @@ from django.shortcuts import render, reverse
 from django.contrib.auth.decorators import login_required
 from django.views.generic import TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.models import User
+from .models import User
 from django.http import JsonResponse
 from .forms import UserRegisterForm
 from django.views.generic import CreateView
-from profiles.models import Profile
+from .forms import StudentSignUpForm, TeacherSignUpForm
 
 
 def home(request):
@@ -21,6 +21,31 @@ class SignUpView(CreateView):
     def get_success_url(self):
          return reverse('login')
 
+
+class StudentSignUpView(CreateView):
+    model = User
+    form_class = StudentSignUpForm
+    template_name = 'registration/signup_form.html'
+
+    def get_context_data(self, **kwargs):
+        kwargs['user_type'] = 'student'
+        return super().get_context_data(**kwargs)
+
+    def get_success_url(self):
+         return reverse('login')
+
+
+class TeacherSignUpView(CreateView):
+    model = User
+    form_class = TeacherSignUpForm
+    template_name = 'registration/signup_form.html'
+
+    def get_context_data(self, **kwargs):
+        kwargs['user_type'] = 'teacher'
+        return super().get_context_data(**kwargs)
+
+    def get_success_url(self):
+         return reverse('login')
 
 def validate_username(request):
     username = request.GET.get('username', None)

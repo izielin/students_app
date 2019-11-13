@@ -1,6 +1,7 @@
 from django.db import models
-from django.contrib.auth.models import User
-from PIL import Image
+from django.conf import settings
+User = settings.AUTH_USER_MODEL
+
 
 YEARS = (
         (1, 'I'),
@@ -17,6 +18,10 @@ class Country(models.Model):
     def __str__(self):
         return self.name
 
+    class Meta:
+        verbose_name = 'Country'
+        verbose_name_plural = 'Countries'
+
 
 class City(models.Model):
     country = models.ForeignKey(Country, on_delete=models.CASCADE)
@@ -24,6 +29,10 @@ class City(models.Model):
 
     def __str__(self):
         return self.name
+
+    class Meta:
+        verbose_name = 'City'
+        verbose_name_plural = 'Cities'
 
 
 class Profile(models.Model):
@@ -50,4 +59,4 @@ class Profile(models.Model):
         elif self.first_name and self.last_name:
             return self.first_name + ' ' + self.last_name
         else:
-            return 'Student' + ' ' + str(self.user.id)
+            return 'Student' + ' ' + str(self.user)
