@@ -1,17 +1,42 @@
 {% extends 'core/base.html' %}
-
 {% load crispy_forms_tags %}
 
+{% block javascript %}
+  <script>
+    $("#id_username").change(function () {
+      var form = $(this).closest("form");
+      $.ajax({
+        url: form.attr("data-validate-username-url"),
+        data: form.serialize(),
+        dataType: 'json',
+        success: function (data) {
+          if (data.is_taken) {
+            alert(data.error_message);
+            document.getElementById("id_username").value = "";
+          }
+        }
+      });
+
+    });
+  </script>
+{% endblock %}
+
 {% block content %}
-  <div class="row">
-    <div class="col-md-8 col-sm-10 col-12">
-      <h2>Sign up as a {{ user_type }}</h2>
-      <form method="post" novalidate>
+
+<div class="row justify-content-center">
+  <div class="col-6">
+    <div class="card">
+      <div class="card-body">
+
+    <h2>Sign up as a {{ user_type }}</h2>
+      <form method="post" novalidate data-validate-username-url="{% url 'validate_username' %}">
         {% csrf_token %}
         <input type="hidden" name="next" value="{{ next }}">
         {{ form|crispy }}
-        <button type="submit" class="btn btn-success">Sign up</button>
+        <button type="submit" class="btn btn-primary">Sign up</button>
       </form>
+      </div>
     </div>
   </div>
+</div>
 {% endblock %}

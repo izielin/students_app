@@ -141,3 +141,4 @@ EMAIL_USE_TLS = True
 EMAIL_PORT = 587
 
 AUTH_USER_MODEL = "core.User"
+AUTHENTICATION_BACKENDS = ('core.backends.CaseInsensitiveModelBackend', )

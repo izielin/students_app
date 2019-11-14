@@ -1,10 +1,10 @@
 from django import forms
-from .models import Profile, City
+from .models import StudentProfile, City
 
 
-class ProfileForm(forms.ModelForm):
+class StudentProfileForm(forms.ModelForm):
     class Meta:
-        model = Profile
+        model = StudentProfile
         fields = ('first_name', 'last_name', 'birthdate',
                   'website', 'country', 'city', 'year')
 

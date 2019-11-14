@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings
+from PIL import Image
 User = settings.AUTH_USER_MODEL
 
 
@@ -35,8 +36,8 @@ class City(models.Model):
         verbose_name_plural = 'Cities'
 
 
-class Profile(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+class StudentProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     first_name = models.CharField(max_length=100, null=True)
     last_name = models.CharField(max_length=100, null=True)
     birthdate = models.DateField(null=True, blank=True)
@@ -60,3 +61,13 @@ class Profile(models.Model):
             return self.first_name + ' ' + self.last_name
         else:
             return 'Student' + ' ' + str(self.user)
+
+    def save(self, **kwargs):
+        super().save()
+
+        img = Image.open(self.picture.path)
+
+        if img.height > 300 or img.width > 300:
+            output_size = (300, 300)
+            img.thumbnail(output_size)
+            img.save(self.picture.path)

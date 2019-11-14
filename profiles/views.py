@@ -3,17 +3,17 @@ from django.http import HttpResponseRedirect, Http404
 from django.shortcuts import render
 from django.views.generic import CreateView, UpdateView
 from django.urls import reverse_lazy
-from .models import Profile, City
-from .forms import ProfileForm
+from .models import StudentProfile, City
+from .forms import StudentProfileForm
 from django.db.models import Q
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 
 def profiles_list(request):
-    profile_list = Profile.objects.all()
+    profile_list = StudentProfile.objects.all()
     query = request.GET.get('q')
     if query:
-        profile_list = Profile.objects.filter(
+        profile_list = StudentProfile.objects.filter(
             Q(first_name__icontains=query) | Q(last_name__icontains=query)
         ).distinct()
 
@@ -30,33 +30,26 @@ def profiles_list(request):
     context = {
         'profiles': profiles
     }
-    return render(request, "profiles/profile_list.html", context)
+    return render(request, "profiles/studentprofile_list.html", context)
 
 
-class ProfileCreateView(CreateView):
-    model = Profile
-    form_class = ProfileForm
-    success_url = reverse_lazy('profile_changelist')
-
-    def form_valid(self, form, **kwargs):
-        form.instance.user = self.request.user
-        form.instance.email = self.request.user.email
-
-        return super().form_valid(form)
-
-
-class ProfileUpdateView(UpdateView):
-    model = Profile
-    fields = ('first_name', 'last_name', 'birthdate', 'email',
+class StudentProfileUpdateView(UpdateView):
+    model = StudentProfile
+    fields = ('first_name', 'last_name', 'birthdate',
               'website', 'country', 'city', 'year', 'picture')
     success_url = reverse_lazy('profile')
+
+    def form_valid(self, form, **kwargs):
+        form.instance.email = self.request.user.email
+        return super().form_valid(form)
 
     def get_success_url(self):
         pk = self.kwargs.get('pk')
         return reverse_lazy('profile', kwargs={'pk': pk})
 
     def get(self, request, *args, **kwargs):
-        if not request.user.id == self.kwargs.get('pk'):
+        if request.user.id != self.kwargs.get('pk'):
+            print(request.user.id, self.kwargs.get('pk'))
             raise Http404
         return super().get(request, *args, **kwargs)
 
@@ -74,11 +67,8 @@ def load_cities(request):
 
 @login_required
 def profile(request, pk):
-    if Profile.objects.filter(user=request.user.id).count() == 1:
-        profile_data = Profile.objects.get(user=pk)
-        context = {
-            'profile': profile_data,
-        }
-        return render(request, 'profiles/profile.html', context)
-    else:
-        return HttpResponseRedirect('add')
+    profile_data = StudentProfile.objects.get(user=request.user)
+    context = {
+        'profile': profile_data,
+    }
+    return render(request, 'profiles/studentprofile.html', context)

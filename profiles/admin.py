@@ -3,4 +3,4 @@ from . import models
 
 admin.site.register(models.Country)
 admin.site.register(models.City)
-admin.site.register(models.Profile)
+admin.site.register(models.StudentProfile)
