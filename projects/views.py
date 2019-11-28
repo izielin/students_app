@@ -5,14 +5,16 @@ from .models import Project, Mark, Course
 from django.db.models import Q
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.urls import reverse_lazy
+from core.decorators import teacher_required
 
 
+@teacher_required
 def projects_list(request):
     project_list = Project.objects.all()
     query = request.GET.get('q')
     if query:
         project_list = Project.objects.filter(
-            Q(first_name__icontains=query) | Q(last_name__icontains=query)
+            Q(name__icontains=query)
         ).distinct()
 
     paginator = Paginator(project_list, 15)  # 15 profiles per page

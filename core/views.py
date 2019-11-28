@@ -47,7 +47,6 @@ class TeacherSignUpView(CreateView):
     def get_success_url(self):
          return reverse('login')
 
-
 def validate_username(request):
     username = request.GET.get('username', None)
     data = {
