@@ -3,8 +3,8 @@ from django.http import HttpResponseRedirect, Http404
 from django.shortcuts import render
 from django.views.generic import CreateView, UpdateView
 from django.urls import reverse_lazy
-from .models import StudentProfile, City
-from .forms import StudentProfileForm
+from .models import StudentProfile, City, TeacherProfile
+from core.models import User
 from django.db.models import Q
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
@@ -48,8 +48,34 @@ class StudentProfileUpdateView(UpdateView):
         return reverse_lazy('profile', kwargs={'pk': pk})
 
     def get(self, request, *args, **kwargs):
+        print(request.user.id, self.kwargs.get('pk'))
+        if not request.user.id == self.kwargs.get('pk'):
+            pass
+        return super().get(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
         if request.user.id != self.kwargs.get('pk'):
-            print(request.user.id, self.kwargs.get('pk'))
+            raise Http404
+        return super().post(request, *args, **kwargs)
+
+
+class TeacherProfileUpdateView(UpdateView):
+    model = TeacherProfile
+    fields = ('first_name', 'last_name', 'birthdate',
+              'country', 'city', 'picture')
+    success_url = reverse_lazy('profile')
+
+    def form_valid(self, form, **kwargs):
+        form.instance.email = self.request.user.email
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        pk = self.kwargs.get('pk')
+        return reverse_lazy('profile', kwargs={'pk': pk})
+
+    def get(self, request, *args, **kwargs):
+        print(request.user.id, self.kwargs.get('pk'))
+        if not request.user.id == self.kwargs.get('pk'):
             raise Http404
         return super().get(request, *args, **kwargs)
 
@@ -67,8 +93,11 @@ def load_cities(request):
 
 @login_required
 def profile(request, pk):
-    profile_data = StudentProfile.objects.get(user=request.user)
+    if User.is_student is True:
+        profile_data = StudentProfile.objects.get(user=request.user)
+    else:
+        profile_data = TeacherProfile.objects.get(user=request.user)
     context = {
         'profile': profile_data,
     }
-    return render(request, 'profiles/studentprofile.html', context)
+    return render(request, 'profiles/profile.html', context)

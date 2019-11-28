@@ -7,11 +7,20 @@
             <div class="row">
                 <div class="col-11"><h2 class="account-heading">
                     {{ profile.first_name|default_if_none:user.username }} {{ profile.last_name|default_if_none:"" }}</h2></div>
+                {% if user.is_student is True %}
+                    <p class="text-secondary">student</p>
+                {% else %}
+                    <p class="text-secondary">nauczyciel</p>
+                {% endif %}
             </div>
                 <h6 class="text-muted">{{ profile.birthdate|default_if_none:"brak danych" }}</h6>
                 <hr> <br>
                 <p class="text-secondary">{{ profile.email|default_if_none:"brak danych" }}</p>
+            {% if user.is_student is True %}
             <button class="btn btn-primary"> <a href="{% url 'profile_change' user.id %}" style="color: white;">Edit</a> </button>
+            {% else %}
+            <button class="btn btn-secondary"> <a href="{% url 'tprofile_change' user.id %}" style="color: white;">Edit</a> </button>
+            {% endif %}
         </div>
       </div>
       </div>

@@ -6,17 +6,39 @@
     <div class="col-6">
       <div class="card">
         <div class="card-body">
-          <h2>Create new Project</h2>
+          <h2>Create your Profile</h2>
             <form method="post" enctype="multipart/form-data" id="profileForm" data-cities-url="{% url 'ajax_load_cities' %}" novalidate>
             {% csrf_token %}
             <table>
               {{ form|crispy }}
             </table>
             <button type="submit" class="btn btn-primary">Save</button>
-            <a href="{% url 'project_list' %}">Nevermind</a>
+            <a href="{% url 'profile_changelist' %}">Nevermind</a>
           </form>
         </div>
       </div>
     </div>
   </div>
+
+
+
+  <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+  <script>
+    $("#id_country").change(function () {
+      var url = $("#profileForm").attr("data-cities-url");
+      var countryId = $(this).val();
+
+      $.ajax({
+        url: url,
+        data: {
+          'country': countryId
+        },
+        success: function (data) {
+          $("#id_city").html(data);
+        }
+      });
+
+    });
+  </script>
+
 {% endblock %}
