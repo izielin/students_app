@@ -6,7 +6,7 @@
             <div class="row">
                 <div class="col-11">
                     <h2 class="account-heading">{{ project.name }}</h2></div>
-                <a href="{% url 'course_add' %}"> <i class="fas fa-plus"></i></a>
+                <a href="{% url 'course_add' project.id %}"> <i class="fas fa-plus"></i></a>
             </div>
         </div>
       </div>

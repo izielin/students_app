@@ -4,20 +4,21 @@ from .forms import ProjectForm, MarkForm, CourseForm
 from .models import Project, Mark, Course
 from django.db.models import Q
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from core.decorators import teacher_required
 
 
 @teacher_required
 def projects_list(request):
-    project_list = Project.objects.all()
+    # good to know - capital letters have priority over lowercase one in alphabetical sorting
+    project_list = Project.objects.order_by('name')
     query = request.GET.get('q')
     if query:
         project_list = Project.objects.filter(
             Q(name__icontains=query)
         ).distinct()
 
-    paginator = Paginator(project_list, 15)  # 15 profiles per page
+    paginator = Paginator(project_list, 15)  # 15 project per page
     page = request.GET.get('page')
 
     try:
@@ -37,6 +38,10 @@ class ProjectCreateView(CreateView):
     model = Project
     form_class = ProjectForm
     success_url = reverse_lazy('project_list')
+
+    def form_valid(self, form, **kwargs):
+        form.instance.teacher = self.request.user
+        return super().form_valid(form)
 
 
 class ProjectUpdateView(UpdateView):
@@ -62,12 +67,12 @@ def projects(request, pk):
 class CourseCreateView(CreateView):
     model = Course
     form_class = CourseForm
-    success_url = reverse_lazy('project')
 
     def form_valid(self, form, **kwargs):
-        form.instance.project = Project.object.get(id=pk)
+        form.instance.teacher = self.request.user
+        form.instance.project = get_object_or_404(Project, pk=self.kwargs.get('pk'))
         return super().form_valid(form)
 
     def get_success_url(self):
         pk = self.object.project.pk
-        return reverse_lazy('project', kwargs={'pk': pk})
+        return reverse('project', kwargs={'pk': pk})

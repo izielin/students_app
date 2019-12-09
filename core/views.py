@@ -7,11 +7,20 @@ from django.http import JsonResponse
 from .forms import UserRegisterForm
 from django.views.generic import CreateView
 from .forms import StudentSignUpForm, TeacherSignUpForm
+from projects.models import Project
 
 
 def home(request):
     count = User.objects.count()
-    return render(request, 'core/home.html', {'count': count})
+    context = {
+            'count': count,
+        }
+
+    if request.user.is_authenticated:
+        projects = Project.objects.filter(teacher=request.user)
+        context['projects'] = projects
+
+    return render(request, 'core/home.html', context)
 
 
 class SignUpView(CreateView):

@@ -4,7 +4,6 @@ from django.conf import settings
 User = settings.AUTH_USER_MODEL
 
 
-
 TYPES = (
     ('m', 'Mandatory '),
     ('o', 'Optional'),
@@ -14,6 +13,7 @@ TYPES = (
 class Project(models.Model):
     name = models.CharField(max_length=150)
     summary = models.TextField(null=True, blank=True)
+    teacher = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
 
     def __str__(self):
         return self.name
@@ -28,16 +28,10 @@ class Course(models.Model):
     credits = models.IntegerField(null=True, default=0)
     mandatory = models.BooleanField(default=True)
     year = models.IntegerField(choices=YEARS, default=1)
-    #teacher
+    teacher = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
 
     def __str__(self):
         return self.name
-
-    def get_type(self):
-        if self.mandatory:
-            return "M"
-        else:
-            return "O"
 
 
 class Mark(models.Model):
