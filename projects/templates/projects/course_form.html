@@ -9,14 +9,43 @@
           <h2>Create new Course</h2>
             <form method="post" enctype="multipart/form-data" id="profileForm" data-cities-url="{% url 'ajax_load_cities' %}" novalidate>
             {% csrf_token %}
-            <table>
-              {{ form|crispy }}
-            </table>
+            <div class="form-group">
+                name<br/>
+                {{ form.name }}
+            </div>
+            <div class="form-group">
+                summary<br/>
+                {{ form.summary }}
+            </div>
+            <div class="form-group">
+                credits<br/>
+                {{ form.credits }}
+            </div>
+            <div class="form-group">
+                mandatory<br/>
+                {{ form.mandatory }}
+            </div>
+            <div class="form-group">
+                year<br/>
+                {{ form.year }}
+            </div>
+
+
+                <div class="form-group">
+                end_date<br/>
+                {{ form.end_date }}
+            </div>
+
             <button type="submit" class="btn btn-primary">Save</button>
-            <a href="{% url 'profile_changelist' %}">Nevermind</a>
-          </form>
+                {% if course.id  %}
+            <a href="{% url 'course' course.id %}">Nevermind</a>
+                {% endif %}
+
+            </form>
         </div>
       </div>
     </div>
   </div>
+
+
 {% endblock %}

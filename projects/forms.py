@@ -1,5 +1,6 @@
 from django import forms
 from .models import Project, Course, Mark
+from .widgets import FengyuanChenDatePickerInput
 
 
 class ProjectForm(forms.ModelForm):
@@ -9,9 +10,14 @@ class ProjectForm(forms.ModelForm):
 
 
 class CourseForm(forms.ModelForm):
+    end_date = forms.DateTimeField(
+        input_formats=['%d/%m/%Y'],
+        widget=FengyuanChenDatePickerInput()
+    )
+
     class Meta:
         model = Course
-        fields = ['name', 'summary', 'start_date', 'end_date', 'credits', 'mandatory', 'year']
+        fields = ['name', 'summary', 'end_date', 'credits', 'mandatory', 'year']
 
 
 class MarkForm(forms.ModelForm):

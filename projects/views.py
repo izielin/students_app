@@ -89,7 +89,7 @@ class CourseCreateView(CreateView):
 
 class CourseUpdateView(UpdateView):
     model = Course
-    fields = ['name', 'summary', 'start_date', 'end_date', 'credits', 'mandatory', 'year']
+    form_class = CourseForm
     success_url = reverse_lazy('course')
 
     def get_success_url(self):

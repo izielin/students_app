@@ -18,7 +18,7 @@ class Course(models.Model):
     name = models.CharField(max_length=200)
     summary = models.TextField(max_length=600, null=True, blank=True)
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
-    start_date = models.DateField()
+    start_date = models.DateField(auto_now_add=True)
     end_date = models.DateField()
     credits = models.IntegerField(null=True, default=0)
     mandatory = models.BooleanField(default=True)
