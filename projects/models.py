@@ -4,11 +4,6 @@ from django.conf import settings
 User = settings.AUTH_USER_MODEL
 
 
-TYPES = (
-    ('m', 'Mandatory '),
-    ('o', 'Optional'),
-)
-
 
 class Project(models.Model):
     name = models.CharField(max_length=150)

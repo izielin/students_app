@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404
-from django.views.generic import CreateView, UpdateView
+from django.views.generic import CreateView, UpdateView, DeleteView
 from .forms import ProjectForm, MarkForm, CourseForm
 from .models import Project, Mark, Course
 from django.db.models import Q
@@ -53,6 +53,15 @@ class ProjectUpdateView(UpdateView):
         pk = self.kwargs.get('pk')
         return reverse_lazy('project', kwargs={'pk': pk})
 
+    def form_valid(self, form, **kwargs):
+        form.instance.teacher = self.request.user
+        return super().form_valid(form)
+
+
+class ProjectDeleteView(DeleteView):
+    model = Project
+    success_url = reverse_lazy('project_list')
+
 
 def projects(request, pk):
     projects_data = Project.objects.get(id=pk)
@@ -76,3 +85,34 @@ class CourseCreateView(CreateView):
     def get_success_url(self):
         pk = self.object.project.pk
         return reverse('project', kwargs={'pk': pk})
+
+
+class CourseUpdateView(UpdateView):
+    model = Course
+    fields = ['name', 'summary', 'start_date', 'end_date', 'credits', 'mandatory', 'year']
+    success_url = reverse_lazy('course')
+
+    def get_success_url(self):
+        pk = self.kwargs.get('pk')
+        return reverse_lazy('course', kwargs={'pk': pk})
+
+    def form_valid(self, form, **kwargs):
+        form.instance.teacher = self.request.user
+        return super().form_valid(form)
+
+
+class CourseDeleteView(DeleteView):
+    model = Course
+    success_url = reverse_lazy('project')
+
+    def get_success_url(self):
+        pk = self.object.project.id
+        return reverse('project', kwargs={'pk': pk})
+
+
+def course(request, pk):
+    course_data = Course.objects.get(id=pk)
+    context = {
+            'course': course_data,
+        }
+    return render(request, 'projects/course.html', context)

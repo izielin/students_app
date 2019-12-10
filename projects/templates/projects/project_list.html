@@ -25,8 +25,8 @@
         <tr>
           <td><a href="{% url 'project' project.pk %}">{{ project.name }}</a></td>
           <td>{{ project.summary }}</td>
-          <td><button><a href="{% url 'project_change' pk=project.pk %}"><i class="fas fa-edit"></i></a></button></td>
-          <td><button><a href="{% url 'project_change' pk=project.pk%}"><i class="fas fa-times-circle"></i></a></button></td>
+          <td><button><a href="{% url 'project_edit' pk=project.pk %}"><i class="fas fa-edit"></i></a></button></td>
+          <td><button><a href="{% url 'project_delete' pk=project.pk%}"><i class="fas fa-times-circle"></i></a></button></td>
         </tr>
       {% empty %}
         <tr>
