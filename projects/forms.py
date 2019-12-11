@@ -1,5 +1,5 @@
 from django import forms
-from .models import Project, Course, Mark
+from .models import Project, Course, Document
 from .widgets import FengyuanChenDatePickerInput
 
 
@@ -20,7 +20,7 @@ class CourseForm(forms.ModelForm):
         fields = ['name', 'summary', 'end_date', 'credits', 'mandatory', 'year']
 
 
-class MarkForm(forms.ModelForm):
+class DocumentForm(forms.ModelForm):
     class Meta:
-        model = Mark
-        fields = '__all__'
+        model = Document
+        fields = ['name', 'document']

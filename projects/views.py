@@ -1,7 +1,7 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, HttpResponseRedirect
 from django.views.generic import CreateView, UpdateView, DeleteView
-from .forms import ProjectForm, MarkForm, CourseForm
-from .models import Project, Mark, Course
+from .forms import ProjectForm, DocumentForm, CourseForm
+from .models import Project, Document, Course
 from django.db.models import Q
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.urls import reverse_lazy, reverse
@@ -113,6 +113,29 @@ class CourseDeleteView(DeleteView):
 def course(request, pk):
     course_data = Course.objects.get(id=pk)
     context = {
+            'files': Document.objects.filter(course=pk),
             'course': course_data,
         }
     return render(request, 'projects/course.html', context)
+
+
+def upload(request, pk):
+    if request.method == 'POST':
+        form = DocumentForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.instance.course = pk
+            form.instance.sender = request.user
+            form.save()
+            return HttpResponseRedirect(reverse('course', kwargs={'pk': pk}))
+    else:
+        form = DocumentForm()
+    return render(request, 'projects/upload_form.html', {'form': form})
+
+
+class UploadDeleteView(DeleteView):
+    model = Document
+    success_message = 'Success: File was deleted.'
+
+    def get_success_url(self):
+        id = self.object.course
+        return reverse('post-download', kwargs={'pk': id})

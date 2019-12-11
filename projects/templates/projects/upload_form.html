@@ -1,0 +1,12 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{% block content %}
+
+  <div class="container content-section my-5 py-5">
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button type="submit"><span>sent</span></button>
+    </form>
+  </div>
+{% endblock %}

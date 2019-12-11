@@ -9,7 +9,8 @@ $(function () {
     done: function (e, data) {
       if (data.result.is_valid) {
         $("#gallery tbody").prepend(
-          "<tr><td><a href='" + data.result.url + "'>" + data.result.name + "</a></td></tr>"
+          "<tr><td><a href='" + data.result.url + "'>" + data.result.name + "</a></td></tr>" +
+            "<tr><td>" + data.result.sender + "</td></tr>"
         )
       }
     }

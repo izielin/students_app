@@ -4,7 +4,6 @@ from django.conf import settings
 User = settings.AUTH_USER_MODEL
 
 
-
 class Project(models.Model):
     name = models.CharField(max_length=150)
     summary = models.TextField(null=True, blank=True)
@@ -27,6 +26,14 @@ class Course(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class Document(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+    document = models.FileField(upload_to='documents/')
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+    course = models.IntegerField()
+    sender = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
 
 
 class Mark(models.Model):

@@ -34,4 +34,23 @@
       </div>
     </div>
     </div>
+
+      <table id="gallery" class="table table-bordered">
+    <thead>
+      <tr>
+        <th>Files</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for file in files %}
+        <tr>
+          <td><a class="text-info" href="{{ file.document.url }}">{{ file.name }}</a></td>
+          <td>{{ file.sender }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+
+    <a href="{% url 'course_upload' pk=course.pk %}">upload</a>
 {% endblock content %}

@@ -11,5 +11,7 @@ urlpatterns = [
     path('course/<int:pk>/edit', views.CourseUpdateView.as_view(), name='course_edit'),
     path('course/<int:pk>/delete', views.CourseDeleteView.as_view(), name='course_delete'),
     path('course/<int:pk>', views.course, name='course'),
+    path('course/<int:pk>/upload', views.upload, name='course_upload'),
+    path('upload/<int:pk>', views.UploadDeleteView.as_view(), name='upload_delete'),
 ]
 
