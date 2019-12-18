@@ -28,11 +28,10 @@ class Course(models.Model):
         return self.name
 
 
-class Document(models.Model):
-    name = models.CharField(max_length=100, unique=True)
-    document = models.FileField(upload_to='documents/')
+class File(models.Model):
+    file = models.FileField(upload_to='files/')
     uploaded_at = models.DateTimeField(auto_now_add=True)
-    course = models.IntegerField()
+    course = models.IntegerField(default="")
     sender = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
 
 

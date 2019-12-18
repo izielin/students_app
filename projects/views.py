@@ -1,14 +1,16 @@
 from django.shortcuts import render, get_object_or_404, HttpResponseRedirect
 from django.views.generic import CreateView, UpdateView, DeleteView
-from .forms import ProjectForm, DocumentForm, CourseForm
-from .models import Project, Document, Course
+from .forms import ProjectForm, CourseForm, FileForm
+from .models import Project, File, Course
 from django.db.models import Q
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.urls import reverse_lazy, reverse
 from core.decorators import teacher_required
+from django.shortcuts import render, HttpResponseRedirect
+from django.http import JsonResponse
+from django.views import View
 
-
-@teacher_required
+# @teacher_required
 def projects_list(request):
     # good to know - capital letters have priority over lowercase one in alphabetical sorting
     project_list = Project.objects.order_by('name')
@@ -76,6 +78,8 @@ def projects(request, pk):
 class CourseCreateView(CreateView):
     model = Course
     form_class = CourseForm
+    template_name = 'projects/course_form.html'
+    success_message = 'Success: Book was created.'
 
     def form_valid(self, form, **kwargs):
         form.instance.teacher = self.request.user
@@ -110,32 +114,31 @@ class CourseDeleteView(DeleteView):
         return reverse('project', kwargs={'pk': pk})
 
 
-def course(request, pk):
-    course_data = Course.objects.get(id=pk)
-    context = {
-            'files': Document.objects.filter(course=pk),
+class CourseView(View):
+    def get(self, request, pk):
+        course_data = Course.objects.get(id=pk)
+        context = {
+            'files': File.objects.filter(course=pk),
             'course': course_data,
+            'pk': pk,
         }
-    return render(request, 'projects/course.html', context)
+        return render(self.request, 'projects/course.html', context)
 
-
-def upload(request, pk):
-    if request.method == 'POST':
-        form = DocumentForm(request.POST, request.FILES)
+    def post(self, request, pk):
+        form = FileForm(self.request.POST, self.request.FILES)
         if form.is_valid():
             form.instance.course = pk
             form.instance.sender = request.user
-            form.save()
-            return HttpResponseRedirect(reverse('course', kwargs={'pk': pk}))
-    else:
-        form = DocumentForm()
-    return render(request, 'projects/upload_form.html', {'form': form})
+            file = form.save()
+            print(file.course)
+            data = {'is_valid': True, 'name': file.file.name, 'url': file.file.url}
+        else:
+            data = {'is_valid': False}
+        return JsonResponse(data)
 
 
-class UploadDeleteView(DeleteView):
-    model = Document
-    success_message = 'Success: File was deleted.'
-
-    def get_success_url(self):
-        id = self.object.course
-        return reverse('post-download', kwargs={'pk': id})
+def delete_file(request, pk):
+    for file in File.objects.filter(id=pk):
+        file.file.delete()
+        file.delete()
+    return HttpResponseRedirect(request.POST.get('next'))

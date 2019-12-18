@@ -1,6 +1,13 @@
 from django import forms
-from .models import Project, Course, Document
+from .models import Project, Course, File
 from .widgets import FengyuanChenDatePickerInput
+from .models import File
+
+
+class FileForm(forms.ModelForm):
+    class Meta:
+        model = File
+        fields = ('file',)
 
 
 class ProjectForm(forms.ModelForm):
@@ -18,9 +25,3 @@ class CourseForm(forms.ModelForm):
     class Meta:
         model = Course
         fields = ['name', 'summary', 'end_date', 'credits', 'mandatory', 'year']
-
-
-class DocumentForm(forms.ModelForm):
-    class Meta:
-        model = Document
-        fields = ['name', 'document']

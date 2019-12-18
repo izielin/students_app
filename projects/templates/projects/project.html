@@ -37,7 +37,8 @@
         </tr>
       {% empty %}
         <tr>
-          <td colspan="4">No course in the database. <a href="{% url 'course_add' project.id %}">Add a course</a>.</td>
+{#          <td colspan="4">No course in the database. <button class="create-course btn btn-primary" type="button" name="button">Add a course</button>.</td>#}
+
         </tr>
       {% endfor %}
     </tbody>

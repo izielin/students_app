@@ -10,8 +10,7 @@ urlpatterns = [
     path('project/<int:pk>/add', views.CourseCreateView.as_view(), name='course_add'),
     path('course/<int:pk>/edit', views.CourseUpdateView.as_view(), name='course_edit'),
     path('course/<int:pk>/delete', views.CourseDeleteView.as_view(), name='course_delete'),
-    path('course/<int:pk>', views.course, name='course'),
-    path('course/<int:pk>/upload', views.upload, name='course_upload'),
-    path('upload/<int:pk>', views.UploadDeleteView.as_view(), name='upload_delete'),
+    path('course/<int:pk>', views.CourseView.as_view(), name='course'),
+    path('upload/<int:pk>', views.delete_file, name='upload_delete'),
 ]
 

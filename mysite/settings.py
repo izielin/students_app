@@ -41,7 +41,6 @@ INSTALLED_APPS = [
     'core.apps.CoreConfig',
     'profiles.apps.ProfilesConfig',
     'projects.apps.ProjectsConfig',
-    'upload.apps.UploadConfig',
 ]
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'

@@ -1,5 +1,31 @@
 {% extends "core/base.html" %}
+
+
+{% load static %}
+
+
+{% block javascript %}
+  {# JQUERY FILE UPLOAD SCRIPTS #}
+  <script src="{% static 'upload/js/jquery-file-upload/vendor/jquery.ui.widget.js' %}"></script>
+  <script src="{% static 'upload/js/jquery-file-upload/jquery.iframe-transport.js' %}"></script>
+  <script src="{% static 'upload/js/jquery-file-upload/jquery.fileupload.js' %}"></script>
+  <script src="{% static 'upload/js/basic-upload.js' %}"></script>
+{% endblock %}
+
 {% block content %}
+
+
+  <div style="margin-bottom: 20px;">
+    <button type="button" class="btn btn-primary js-upload-photos">
+      <span class="glyphicon glyphicon-cloud-upload"></span> Upload photos
+    </button>
+    <input id="fileupload" type="file" name="file" multiple
+           style="display: none;"
+           data-url="{% url 'course' pk%}"
+           data-form-data='{"csrfmiddlewaretoken": "{{ csrf_token }}"}'>
+  </div>
+
+
     <div class="content-section">
       <div class="media">
         <div class="media-body">
@@ -35,22 +61,38 @@
     </div>
     </div>
 
-      <table id="gallery" class="table table-bordered">
+  <table id="gallery" class="table table-bordered">
     <thead>
       <tr>
-        <th>Files</th>
+        <th>Photo</th>
       </tr>
     </thead>
     <tbody>
-      {% for file in files %}
+      {% if user.is_teacher %}
+    {% for file in files %}
         <tr>
-          <td><a class="text-info" href="{{ file.document.url }}">{{ file.name }}</a></td>
-          <td>{{ file.sender }}</td>
+        <td><a href="{{ file.file.url }}">{{ file.file.name }}</a></td><td>{{ file.sender }}</td>
+        <td>
+            <form method="post" action="{% url 'upload_delete' pk=file.pk %}">
+                {% csrf_token %}
+                <input type="hidden" name="next" value="{{ request.path }}">
+                <button type="submit" class="btn btn-danger pull-right">
+                  <span class="glyphicon glyphicon-trash"></span> Clear Database
+                </button>
+              </form>
+        </td>
         </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+    {% endfor %}
+    {% elif user.is_student %}
+    {% for file in files %}
+        <tr>
+        <td>{{ file.file.name }}</td>
+        </tr>
+    {% endfor %}
+    {% endif %}
+
+</tbody>
+</table>
 
 
-    <a href="{% url 'course_upload' pk=course.pk %}">upload</a>
 {% endblock content %}
