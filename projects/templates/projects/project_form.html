@@ -1,22 +1,28 @@
-{% extends 'core/base.html' %}
-{% load crispy_forms_tags %}
-{% block content %}
+<form method="post" action="">
+  {% csrf_token %}
 
-  <div class="row justify-content-center">
-    <div class="col-6">
-      <div class="card">
-        <div class="card-body">
-          <h2>Create new Project</h2>
-            <form method="post" enctype="multipart/form-data" id="profileForm" data-cities-url="{% url 'ajax_load_cities' %}" novalidate>
-            {% csrf_token %}
-            <table>
-              {{ form|crispy }}
-            </table>
-            <button type="submit" class="btn btn-primary">Save</button>
-            <a href="{% url 'project_list' %}">Nevermind</a>
-          </form>
-        </div>
-      </div>
-    </div>
+ <div class="modal-header">
+    <h5 class="modal-title">Create new Book</h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
   </div>
-{% endblock %}
+
+  <div class="modal-body">
+    {% for field in form %}
+      <div class="form-group{% if field.errors %} invalid{% endif %}">
+        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+        {{ field }}
+        {% for error in field.errors %}
+          <p class="help-block">{{ error }}</p>
+        {% endfor %}
+      </div>
+    {% endfor %}
+  </div>
+
+  <div class="modal-footer">
+    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+    <button type="button" class="submit-btn btn btn-primary">Create</button>
+  </div>
+
+</form>

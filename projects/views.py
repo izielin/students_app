@@ -9,7 +9,9 @@ from core.decorators import teacher_required
 from django.shortcuts import render, HttpResponseRedirect
 from django.http import JsonResponse
 from django.views import View
-
+from bootstrap_modal_forms.generic import (BSModalCreateView,
+                                           BSModalUpdateView,
+                                           BSModalDeleteView)
 # @teacher_required
 def projects_list(request):
     # good to know - capital letters have priority over lowercase one in alphabetical sorting
@@ -36,7 +38,7 @@ def projects_list(request):
     return render(request, "projects/project_list.html", context)
 
 
-class ProjectCreateView(CreateView):
+class ProjectCreateView(BSModalCreateView):
     model = Project
     form_class = ProjectForm
     success_url = reverse_lazy('project_list')
@@ -46,10 +48,12 @@ class ProjectCreateView(CreateView):
         return super().form_valid(form)
 
 
-class ProjectUpdateView(UpdateView):
+class ProjectUpdateView(BSModalUpdateView):
     model = Project
-    fields = ('name', 'summary')
+    template_name = 'projects/project_update_form.html'
     success_url = reverse_lazy('project')
+    form_class = ProjectForm
+    success_message = 'Success: Book was updated.'
 
     def get_success_url(self):
         pk = self.kwargs.get('pk')
@@ -60,8 +64,10 @@ class ProjectUpdateView(UpdateView):
         return super().form_valid(form)
 
 
-class ProjectDeleteView(DeleteView):
+class ProjectDeleteView(BSModalDeleteView):
     model = Project
+    template_name = 'projects/project_delete.html'
+    success_message = 'Success: Book was deleted.'
     success_url = reverse_lazy('project_list')
 
 

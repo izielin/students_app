@@ -2,7 +2,7 @@ from django import forms
 from .models import Project, Course, File
 from .widgets import FengyuanChenDatePickerInput
 from .models import File
-
+from bootstrap_modal_forms.forms import BSModalForm
 
 class FileForm(forms.ModelForm):
     class Meta:
@@ -10,7 +10,7 @@ class FileForm(forms.ModelForm):
         fields = ('file',)
 
 
-class ProjectForm(forms.ModelForm):
+class ProjectForm(BSModalForm):
     class Meta:
         model = Project
         fields = ['name', 'summary']
