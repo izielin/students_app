@@ -1,0 +1,112 @@
+{% extends 'core/base.html' %}
+
+{% block title %}projects for student{% endblock %}
+
+{% block content %}
+
+    <style>
+    .ellipsis{
+  display: block;
+  display: -webkit-box;
+  max-width: 100%;
+  height: 43px;
+  margin: 0 auto;
+  font-size: 16px;
+  line-height: 1;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+    }
+    </style>
+
+    <div class="modal fade" tabindex="-1" role="dialog" id="modal">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content"></div>
+  </div>
+</div>
+
+<div class="row">
+<div class="col-9">
+      <h2>projects Module</h2>
+
+        <div class="row">
+
+      {% for project in projects %}
+  <div class="col-4">
+          <div class="card" >
+          <div class="card-body">
+            <h5 class="card-title"><a href="{% url 'project' project.pk %}">{{ project.name }}</a></h5>
+            <p class="card-text ellipsis" style="height: auto;">{{ project.summary }}</p>
+            <button type="button" class="details btn btn-sm btn-primary" data-id="{% url 'project_shortcut' project.pk %}">
+                <span> Show details</span>
+        </button>
+          </div>
+        </div>
+        </div>
+      {% endfor %}
+
+</div>
+</div>
+
+
+
+<div class="col-3">
+      <div class="content-section">
+    <h3>Our Sidebar</h3>
+    <p class='text-muted'>You can put any information here you'd like.
+      <ul class="list-group">
+            <form method="GET" style="margin: auto;">
+                <div class="input-field">
+                    <div class="row">
+                        <input type="text" name="q" value="{{ request.GET.q }}" placeholder="Wyszukaj" style="width: 80%;">
+                        <button class="btn btn-light" type="submit" name="action"><i class="fas fa-search"></i></button>
+                    </div>
+                </div>
+            </form>
+      </ul>
+    </p>
+  </div>
+
+</div>
+
+</div>
+
+        {% if projects.has_other_pages %}
+
+        {% if projects.has_previous %}
+                <a class="btn btn-outline-info mb-4" href="?page=1">First</a>
+                <a class="btn btn-outline-info mb-4" href="?page=
+                    {{ projects.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">Previous</a>
+        {% endif %}
+
+
+        {% for num in projects.paginator.page_range %}
+            {% if projects.number == num %}
+                <a class="btn btn-info mb-4" href="?page={{ num }}">{{ num }}</a>
+            {% elif num > projects.number|add:'-3' and num < projects.number|add:'3' %}
+                <a class="btn btn-outline-info mb-4"
+                   href="?page={{ num }}">{{ num }}</a>
+            {% endif %}
+        {% endfor %}
+
+
+        {% if projects.has_next %}
+            <a class="btn btn-outline-info mb-4" href="?page=
+                {{ projects.next_page_number }}">Next</a>
+            <a class="btn btn-outline-info mb-4" href="?page=
+                {{ projects.paginator.num_pages }}">Last</a>
+        {% endif %}
+{% endif %}
+
+    <script>
+  $(function () {
+    $(".details").each(function () {
+      $(this).modalForm({formURL: $(this).data('id')});
+    });
+  });
+    </script>
+
+{% endblock %}
+
+

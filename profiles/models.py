@@ -2,8 +2,6 @@ from django.db import models
 from django.conf import settings
 from PIL import Image
 User = settings.AUTH_USER_MODEL
-
-
 YEARS = (
         (1, 'I'),
         (2, 'II'),
@@ -11,6 +9,7 @@ YEARS = (
         (4, 'IV'),
         (5, 'V'),
 )
+from projects.models import Project
 
 
 class Country(models.Model):
@@ -42,6 +41,7 @@ class Profile(models.Model):
     last_name = models.CharField(max_length=100, null=True)
     birthdate = models.DateField(null=True, blank=True)
     picture = models.ImageField(default='default.jpg', upload_to='profile_pics')
+    projects = models.ManyToManyField(Project, null=True)
     website = models.URLField(max_length=100, null=True, blank=True)
     email = models.EmailField(max_length=100, null=True)
     country = models.ForeignKey(Country, on_delete=models.SET_NULL, null=True)

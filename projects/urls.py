@@ -1,9 +1,12 @@
 from django.urls import path
+from django.conf.urls import url
 from . import views
 
 urlpatterns = [
     path('project/<int:pk>', views.projects, name='project'),
+    url(r'^ajax/details/(?P<pk>\d+)/$', views.ProjectReadView.as_view(), name='project_shortcut'),
     path('project/list/', views.projects_list, name='project_list'),
+    path('project/list/student', views.projects_list_for_students, name='s_project_list'),
     path('project/add/', views.ProjectCreateView.as_view(), name='project_add'),
     path('project/<int:pk>/delete', views.ProjectDeleteView.as_view(), name='project_delete'),
     path('project/<int:pk>/edit', views.ProjectUpdateView.as_view(), name='project_edit'),

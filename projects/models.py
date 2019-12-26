@@ -41,4 +41,4 @@ class Mark(models.Model):
     mark = models.IntegerField(default=0)
 
     def __str__(self):
-        return self.student + ' ' + self.course + ' ' + self.mark
+        return self.student.name + ' ' + self.course + ' ' + self.mark

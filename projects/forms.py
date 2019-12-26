@@ -1,7 +1,7 @@
 from django import forms
 from .models import Project, Course, File
 from .widgets import FengyuanChenDatePickerInput
-from .models import File
+from profiles.models import Profile
 from bootstrap_modal_forms.forms import BSModalForm
 
 class FileForm(forms.ModelForm):
@@ -25,3 +25,10 @@ class CourseForm(forms.ModelForm):
     class Meta:
         model = Course
         fields = ['name', 'summary', 'end_date', 'credits', 'mandatory', 'year']
+
+
+class TakePartForm(forms.ModelForm):
+    class Meta:
+        model = Profile
+        fields = ['projects']
+        widgets = {'projects': forms.HiddenInput()}

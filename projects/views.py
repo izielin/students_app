@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404, HttpResponseRedirect
 from django.views.generic import CreateView, UpdateView, DeleteView
-from .forms import ProjectForm, CourseForm, FileForm
+from .forms import ProjectForm, CourseForm, FileForm, TakePartForm
 from .models import Project, File, Course
 from django.db.models import Q
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -9,9 +9,10 @@ from core.decorators import teacher_required
 from django.shortcuts import render, HttpResponseRedirect
 from django.http import JsonResponse
 from django.views import View
-from bootstrap_modal_forms.generic import (BSModalCreateView,
-                                           BSModalUpdateView,
-                                           BSModalDeleteView)
+from bootstrap_modal_forms.generic import BSModalCreateView, BSModalUpdateView, BSModalReadView, BSModalDeleteView
+from profiles.models import Profile
+from django.forms.models import model_to_dict
+
 # @teacher_required
 def projects_list(request):
     # good to know - capital letters have priority over lowercase one in alphabetical sorting
@@ -38,6 +39,24 @@ def projects_list(request):
     return render(request, "projects/project_list.html", context)
 
 
+def projects_list_for_students(request):
+    project_list = Project.objects.order_by('name')
+    paginator = Paginator(project_list, 15)  # 15 project per page
+    page = request.GET.get('page')
+
+    try:
+        projects = paginator.page(page)
+    except PageNotAnInteger:
+        projects = paginator.page(1)
+    except EmptyPage:
+        projects = paginator.page(paginator.num_pages)
+
+    context = {
+        'projects': projects
+    }
+    return render(request, "projects/projects_list_for_students.html", context)
+
+
 class ProjectCreateView(BSModalCreateView):
     model = Project
     form_class = ProjectForm
@@ -53,7 +72,7 @@ class ProjectUpdateView(BSModalUpdateView):
     template_name = 'projects/project_update_form.html'
     success_url = reverse_lazy('project')
     form_class = ProjectForm
-    success_message = 'Success: Book was updated.'
+    success_message = 'Success: Project was updated.'
 
     def get_success_url(self):
         pk = self.kwargs.get('pk')
@@ -67,8 +86,24 @@ class ProjectUpdateView(BSModalUpdateView):
 class ProjectDeleteView(BSModalDeleteView):
     model = Project
     template_name = 'projects/project_delete.html'
-    success_message = 'Success: Book was deleted.'
+    success_message = 'Success: Project was deleted.'
     success_url = reverse_lazy('project_list')
+
+
+class ProjectReadView(BSModalReadView):
+    model = Project
+    template_name = 'projects/project_shortcut.html'
+
+    def post(self, request, pk):
+        if request.method=='POST':
+            project = Project.objects.filter(pk=pk)
+            obj = Profile.objects.get(user=self.request.user)
+            obj.projects.set(project)
+            obj.save()
+            data = {'is_valid': True, 'project': str(project),}
+        else:
+            data = {'is_valid': False}
+        return JsonResponse(data)
 
 
 def projects(request, pk):
@@ -85,7 +120,7 @@ class CourseCreateView(CreateView):
     model = Course
     form_class = CourseForm
     template_name = 'projects/course_form.html'
-    success_message = 'Success: Book was created.'
+    success_message = 'Success: Course was created.'
 
     def form_valid(self, form, **kwargs):
         form.instance.teacher = self.request.user
@@ -136,7 +171,6 @@ class CourseView(View):
             form.instance.course = pk
             form.instance.sender = request.user
             file = form.save()
-            print(file.course)
             data = {'is_valid': True, 'name': file.file.name, 'url': file.file.url}
         else:
             data = {'is_valid': False}
