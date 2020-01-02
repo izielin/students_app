@@ -100,6 +100,9 @@
 
     <div class="container">
   <button type="submit"  id="button" class="submit_button"></button>
+        <button type="button" class="details btn btn-sm btn-primary" data-id="{% url 'project_shortcut' project.pk %}">
+                <span> Show details</span>
+        </button>
 </div>
 </form>
 <div class="modal-footer">
@@ -113,13 +116,12 @@
       $( '#button ').addClass( "validate");
     }, 1500 );
     $.ajax({
-        url: "{% url 's_project_list' %}",
         dataType: 'json',
          done: function (e, data) {
           if (data.result.is_valid) {
-              $("#gallery").prepend(
-          "<p>data.result.project<p>"
-        )
+            $(".details").each(function () {
+      $(this).modalForm({formURL: $(this).data('id')});
+    });
           }
         }
     });

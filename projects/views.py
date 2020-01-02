@@ -51,8 +51,9 @@ def projects_list_for_students(request):
     except EmptyPage:
         projects = paginator.page(paginator.num_pages)
 
+    user = Profile.objects.get(user=request.user)
     context = {
-        'projects': projects
+        'projects': projects,
     }
     return render(request, "projects/projects_list_for_students.html", context)
 
@@ -95,10 +96,10 @@ class ProjectReadView(BSModalReadView):
     template_name = 'projects/project_shortcut.html'
 
     def post(self, request, pk):
-        if request.method=='POST':
-            project = Project.objects.filter(pk=pk)
+        if request.method == 'POST':
+            project = Project.objects.get(pk=pk)
             obj = Profile.objects.get(user=self.request.user)
-            obj.projects.set(project)
+            obj.projects.add(project.id)
             obj.save()
             data = {'is_valid': True, 'project': str(project),}
         else:
