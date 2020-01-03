@@ -18,8 +18,8 @@ class StudentSignUpForm(UserCreationForm):
         fields = ['username', 'email', 'password1', 'password2']
 
     @transaction.atomic
-    def save(self):
-        user = super().save(commit=False)
+    def save(self, commit=True, *args, **kwargs):
+        user = super().save(commit=False, *args, **kwargs)
         user.is_student = True
         user.save()
         return user
@@ -30,9 +30,9 @@ class TeacherSignUpForm(UserCreationForm):
         model = User
         fields = ['username', 'email', 'password1', 'password2']
 
-    def save(self, commit=True):
-        user = super().save(commit=False)
+    @transaction.atomic
+    def save(self, commit=True, *args, **kwargs):
+        user = super().save(commit=False, *args, **kwargs)
         user.is_teacher = True
-        if commit:
-            user.save()
+        user.save()
         return user

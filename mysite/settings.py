@@ -136,8 +136,8 @@ LOGOUT_REDIRECT_URL = 'home'
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = 'ecg.vot@gmail.com'
-EMAIL_HOST_PASSWORD = 'ecg.VOT.019'
+EMAIL_HOST_USER = 'sylvanthebot@gmail.com'
+EMAIL_HOST_PASSWORD = 'proGRESSO12'
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
 
