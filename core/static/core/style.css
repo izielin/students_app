@@ -82,3 +82,65 @@ a.article-title:hover {
 .account-heading {
   font-size: 2.5rem;
 }
+
+   button:focus {
+        outline: none;
+    }
+      .submit_button {
+	 outline: none;
+	 height: 40px;
+	 text-align: center;
+	 width: 90px;
+	 border-radius: 40px;
+	 background: #fff;
+	 border: 2px solid #1ecd97;
+	 color: #1ecd97;
+	 letter-spacing: 1px;
+	 text-shadow: 0;
+	 font-size: 12px;
+	 font-weight: bold;
+	 cursor: pointer;
+	 transition: all 0.25s ease;
+}
+  .submit_button:hover {
+	 color: white;
+	 background: #1ecd97;
+}
+      .submit_button:active {
+	 letter-spacing: 2px;
+}
+ .submit_button:after {
+	 content: "Take Part";
+}
+ .onclic {
+	 width: 40px;
+	 border-color: #bbb;
+	 border-width: 3px;
+	 font-size: 0;
+	 border-left-color: #1ecd97;
+	 animation: rotating 2s 0.25s linear infinite;
+}
+ .onclic:after {
+	 content: "";
+}
+ .onclic:hover {
+	 color: #1ecd97;
+	 background: white;
+}
+ .validate {
+	 font-size: 13px;
+	 color: white;
+	 background: #1ecd97;
+}
+ .validate:after {
+    font-family: 'Font Awesome\ 5 Free';
+	 content: "\f00c";
+}
+ @keyframes rotating {
+	 from {
+		 transform: rotate(0deg);
+	}
+	 to {
+		 transform: rotate(360deg);
+	}
+}

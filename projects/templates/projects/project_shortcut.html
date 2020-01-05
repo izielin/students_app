@@ -1,66 +1,3 @@
-<style>
-    button:focus {
-        outline: none;
-    }
-      .submit_button {
-	 outline: none;
-	 height: 40px;
-	 text-align: center;
-	 width: 90px;
-	 border-radius: 40px;
-	 background: #fff;
-	 border: 2px solid #1ecd97;
-	 color: #1ecd97;
-	 letter-spacing: 1px;
-	 text-shadow: 0;
-	 font-size: 12px;
-	 font-weight: bold;
-	 cursor: pointer;
-	 transition: all 0.25s ease;
-}
-  .submit_button:hover {
-	 color: white;
-	 background: #1ecd97;
-}
-      .submit_button:active {
-	 letter-spacing: 2px;
-}
- .submit_button:after {
-	 content: "Take Part";
-}
- .onclic {
-	 width: 40px;
-	 border-color: #bbb;
-	 border-width: 3px;
-	 font-size: 0;
-	 border-left-color: #1ecd97;
-	 animation: rotating 2s 0.25s linear infinite;
-}
- .onclic:after {
-	 content: "";
-}
- .onclic:hover {
-	 color: #1ecd97;
-	 background: white;
-}
- .validate {
-	 font-size: 13px;
-	 color: white;
-	 background: #1ecd97;
-}
- .validate:after {
-    font-family: 'Font Awesome\ 5 Free';
-	 content: "\f00c";
-}
- @keyframes rotating {
-	 from {
-		 transform: rotate(0deg);
-	}
-	 to {
-		 transform: rotate(360deg);
-	}
-}
-</style>
 <div class="modal-header">
   <h3 class="modal-title">Project details</h3>
   <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -70,7 +7,7 @@
 
 <div class="modal-body">
 
-  <div class="">
+  <div id="name">
     Title:
     {{ project.name }}
   </div>
@@ -86,45 +23,53 @@
     <div id="gallery"></div>
 
 </div>
-<form method="post" action="">
-  {% csrf_token %}
-    {% for field in form %}
-      <div class="form-group{% if field.errors %} invalid{% endif %}">
-        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-        {{ field }}
-        {% for error in field.errors %}
-          <p class="help-block">{{ error }}</p>
-        {% endfor %}
-      </div>
-    {% endfor %}
-
-    <div class="container">
-  <button type="submit"  id="button" class="submit_button"></button>
-        <button type="button" class="details btn btn-sm btn-primary" data-id="{% url 'project_shortcut' project.pk %}">
-                <span> Show details</span>
-        </button>
-</div>
+<form method="POST" id="post-form">
+    {% csrf_token %}
+    <button type="submit"  id="button" class="submit_button"></button>
 </form>
 <div class="modal-footer">
   <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
 </div>
-<script>$(function() {
-  $( "#button" ).click(function() {
+<script>
+
+     $( "#button" ).click(function() {
+    $( this ).addClass( "onclic");
     $( this ).addClass( "onclic");
     setTimeout(function() {
       $( "#button" ).removeClass( "onclic" );
       $( '#button ').addClass( "validate");
     }, 1500 );
-    $.ajax({
-        dataType: 'json',
-         done: function (e, data) {
-          if (data.result.is_valid) {
-            $(".details").each(function () {
-      $(this).modalForm({formURL: $(this).data('id')});
-    });
-          }
-        }
-    });
   });
 
-  });</script>
+  $('#post-form').on('submit', function(event){
+    event.preventDefault();
+    console.log("start!");  // sanity check
+    subscribe();
+  });
+
+  function subscribe() {
+    console.log("subscripting is working!"); // sanity check
+    $.ajax({
+        //url : "create_post/", // the endpoint
+        type : "POST", // http method
+        data:{
+            csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
+            action: 'post'
+        }, // data sent with the post request
+
+        // handle a successful response
+        success : function(json) {
+            console.log(json); // log the returned json to the console
+            console.log("success"); // another sanity check
+        },
+
+        // handle a non-successful response
+        error : function(xhr,errmsg,err) {
+            $('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: "+errmsg+
+                " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
+            console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+        }
+    });
+}
+
+</script>

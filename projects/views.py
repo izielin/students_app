@@ -13,7 +13,8 @@ from bootstrap_modal_forms.generic import BSModalCreateView, BSModalUpdateView, 
 from profiles.models import Profile
 from django.forms.models import model_to_dict
 
-# @teacher_required
+
+@teacher_required
 def projects_list(request):
     # good to know - capital letters have priority over lowercase one in alphabetical sorting
     project_list = Project.objects.order_by('name')
@@ -91,25 +92,28 @@ class ProjectDeleteView(BSModalDeleteView):
     success_url = reverse_lazy('project_list')
 
 
+def subscribe(request, pk):
+    if request.POST.get('action') == 'post':
+        project = Project.objects.get(pk=pk)
+        obj = Profile.objects.get(user=request.user)
+        obj.projects.add(project.id)
+        obj.save()
+        data = {'is_valid': True, 'project': str(project)}
+        return JsonResponse(data)
+
+
 class ProjectReadView(BSModalReadView):
     model = Project
     template_name = 'projects/project_shortcut.html'
 
-    def post(self, request, pk):
-        if request.method == 'POST':
-            project = Project.objects.get(pk=pk)
-            obj = Profile.objects.get(user=self.request.user)
-            obj.projects.add(project.id)
-            obj.save()
-            data = {'is_valid': True, 'project': str(project),}
-        else:
-            data = {'is_valid': False}
-        return JsonResponse(data)
+    # def (self, project_id, **kwargs):
+    #     subscribe(self.request, project_id)
 
 
 def projects(request, pk):
     projects_data = Project.objects.get(id=pk)
     courses = Course.objects.filter(project=pk)
+    subscribe(request, pk)
     context = {
             'project': projects_data,
             'courses': courses,
