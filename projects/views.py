@@ -1,12 +1,12 @@
 from django.shortcuts import render, get_object_or_404, HttpResponseRedirect
 from django.views.generic import CreateView, UpdateView, DeleteView
-from .forms import ProjectForm, CourseForm, FileForm, TakePartForm
-from .models import Project, File, Course
+from .forms import ProjectForm, CourseForm, FileForm, MarkForm
+from .models import Project, File, Course, Mark
 from django.db.models import Q
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.urls import reverse_lazy, reverse
 from core.decorators import teacher_required
-from django.shortcuts import render, HttpResponseRedirect
+from django.shortcuts import render, redirect, HttpResponseRedirect
 from django.http import JsonResponse
 from django.views import View
 from bootstrap_modal_forms.generic import BSModalCreateView, BSModalUpdateView, BSModalReadView, BSModalDeleteView
@@ -187,3 +187,23 @@ def delete_file(request, pk):
         file.file.delete()
         file.delete()
     return HttpResponseRedirect(request.POST.get('next'))
+
+
+def set_mark(request, pk):
+    course = Course.objects.get(pk=pk)
+    curr_grades = Mark.objects.filter(course=course)
+    queryset = Mark.objects.filter(course=course)
+
+    if request.method == 'POST':
+        form = MarkForm(request.POST, request.FILES)
+        if form.is_valid():
+            instances = form.save(commit=False)
+            for instance in instances:
+                instance.save()
+            return redirect('course_detail', pk=pk)
+        else:
+            print(form.errors)
+    else:
+        form = MarkForm()
+
+    return render(request, 'projects/mark.html', {'form': form, 'course': course},)

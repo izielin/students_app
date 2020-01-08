@@ -1,8 +1,9 @@
 from django import forms
-from .models import Project, Course, File
+from .models import Project, Course, File, Mark
 from .widgets import FengyuanChenDatePickerInput
 from profiles.models import Profile
 from bootstrap_modal_forms.forms import BSModalForm
+
 
 class FileForm(forms.ModelForm):
     class Meta:
@@ -32,3 +33,11 @@ class TakePartForm(forms.ModelForm):
         model = Profile
         fields = ['projects']
         widgets = {'projects': forms.HiddenInput()}
+
+
+class MarkForm(forms.ModelForm):
+    student = forms.ChoiceField(choices=[(p.user.id, p.first_name) for p in Profile.objects.all()])
+
+    class Meta:
+        model = Mark
+        fields = ('student', 'mark', )
