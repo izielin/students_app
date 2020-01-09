@@ -40,5 +40,6 @@ class Mark(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     mark = models.IntegerField(default=0)
 
+
     def __str__(self):
-        return self.student.name + ' ' + self.course + ' ' + self.mark
+        return 'Student' + ' ' + str(self.student) + ' ' + str(self.mark)

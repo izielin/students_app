@@ -106,6 +106,8 @@ class ProjectReadView(BSModalReadView):
     model = Project
     template_name = 'projects/project_shortcut.html'
 
+    #TODO: call subscribe function
+
     # def (self, project_id, **kwargs):
     #     subscribe(self.request, project_id)
 
@@ -189,21 +191,20 @@ def delete_file(request, pk):
     return HttpResponseRedirect(request.POST.get('next'))
 
 
-def set_mark(request, pk):
-    course = Course.objects.get(pk=pk)
-    curr_grades = Mark.objects.filter(course=course)
-    queryset = Mark.objects.filter(course=course)
+class MarkCreateView(BSModalCreateView):
+    model = Mark
+    form_class = MarkForm
+    template_name = 'projects/mark.html'
+    success_message = 'Success: mark set'
 
-    if request.method == 'POST':
-        form = MarkForm(request.POST, request.FILES)
-        if form.is_valid():
-            instances = form.save(commit=False)
-            for instance in instances:
-                instance.save()
-            return redirect('course_detail', pk=pk)
-        else:
-            print(form.errors)
-    else:
-        form = MarkForm()
 
-    return render(request, 'projects/mark.html', {'form': form, 'course': course},)
+    def form_valid(self, form, **kwargs):
+        #TODO: check if form.mark is lower than credits
+        form.instance.course = get_object_or_404(Course, pk=self.kwargs.get('pk'))
+        return super().form_valid(form)
+
+    def get_success_url(self, **kwargs):
+        #TODO set correctly success url
+        pk = self.course.id
+        print(pk)
+        return reverse('course', kwargs={'pk': pk})

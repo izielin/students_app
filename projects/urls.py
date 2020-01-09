@@ -15,6 +15,6 @@ urlpatterns = [
     path('course/<int:pk>/delete', views.CourseDeleteView.as_view(), name='course_delete'),
     path('course/<int:pk>', views.CourseView.as_view(), name='course'),
     path('upload/<int:pk>', views.delete_file, name='upload_delete'),
-    path('course/<int:pk>/setmark/', views.set_mark, name='mark'),
+    path('course/<int:pk>/setmark/', views.MarkCreateView.as_view(), name='mark'),
 ]
 

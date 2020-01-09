@@ -36,8 +36,12 @@ class TakePartForm(forms.ModelForm):
 
 
 class MarkForm(forms.ModelForm):
-    student = forms.ChoiceField(choices=[(p.user.id, p.first_name) for p in Profile.objects.all()])
+    #TODO: take only 'subscribers'
+     def __init__(self, *args, **kwargs):
+         self.request = kwargs.pop('request', None)
+         super(MarkForm, self).__init__(*args, **kwargs)
 
-    class Meta:
-        model = Mark
-        fields = ('student', 'mark', )
+     class Meta:
+         model = Mark
+         fields = ('student', 'mark', )
+

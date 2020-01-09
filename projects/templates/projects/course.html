@@ -14,6 +14,11 @@
 
 {% block content %}
 
+    <div class="modal fade" tabindex="-1" role="dialog" id="modal">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content"></div>
+  </div>
+</div>
 
   <div style="margin-bottom: 20px;">
     <button type="button" class="btn btn-primary js-upload-photos">
@@ -24,7 +29,7 @@
            data-url="{% url 'course' pk%}"
            data-form-data='{"csrfmiddlewaretoken": "{{ csrf_token }}"}'>
   </div>
-    <i class="material-icons">done</i> <a href="{% url 'mark' pk %}">Grade Students</a>
+    <button class="set-mark btn btn-primary" data-id="{% url 'mark' pk=course.pk %}" type="button" name="button">Set mark</button>
 
 
     <div class="content-section">
@@ -95,5 +100,13 @@
 </tbody>
 </table>
 
+<script type="text/javascript">
+$(document).ready(function() {
+
+    $(".set-mark").each(function () {
+      $(this).modalForm({formURL: $(this).data('id')});
+    });
+});
+</script>
 
 {% endblock content %}
