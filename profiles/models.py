@@ -60,7 +60,7 @@ class Profile(models.Model):
         elif self.first_name and self.last_name:
             return self.first_name + ' ' + self.last_name
         else:
-            return 'Student' + ' ' + str(self.user)
+            return 'User' + ' ' + str(self.user)
 
     def save(self, **kwargs):
         super().save()
