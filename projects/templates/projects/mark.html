@@ -11,7 +11,19 @@
 
   <div class="modal-body">
     <table>
-      {{ form|crispy }}
+            {% csrf_token %}
+         <div class="form-group">
+                {{ form.course.label_tag }}<br/>
+                {{ form.course }}
+            </div>
+         <div class="form-group">
+                {{ form.student.label_tag }}<br/>
+                {{ form.student }}
+            </div>
+         <div class="form-group">
+             <label for="id_mark">Number of points (0-{{ max_mark }}):</label><br>
+                <input type="number" name="mark"  required  min="1" max="{{max_mark}}" id="id_mark">
+            </div>
     </table>
   </div>
 

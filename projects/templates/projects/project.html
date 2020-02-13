@@ -20,7 +20,7 @@
       <tr>
         <th>mandatory</th>
         <th>Name</th>
-        <th>credits</th>
+        <th>points</th>
       </tr>
     </thead>
     <tbody>
@@ -34,7 +34,7 @@
         {% endif %}
 
             <td><a href="{% url 'course' course.pk %}">{{ course.name }}</a></td>
-          <td>{{ course.credits }}</td>
+          <td>{{ course.points }}</td>
          <td><button><a href="{% url 'course_edit' pk=course.pk %}"><i class="fas fa-edit"></i></a></button></td>
          <td><button><a href="{% url 'course_delete' pk=course.pk %}"><i class="fas fa-times-circle"></i></a></button></td>
 

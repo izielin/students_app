@@ -4,7 +4,9 @@ from .widgets import FengyuanChenDatePickerInput
 from profiles.models import Profile
 from bootstrap_modal_forms.forms import BSModalForm
 from django.contrib.auth import get_user_model
+
 User = get_user_model()
+
 
 class FileForm(forms.ModelForm):
     class Meta:
@@ -26,7 +28,7 @@ class CourseForm(forms.ModelForm):
 
     class Meta:
         model = Course
-        fields = ['name', 'summary', 'end_date', 'credits', 'mandatory', 'year']
+        fields = ['name', 'summary', 'end_date', 'points', 'mandatory', 'year']
 
 
 class TakePartForm(forms.ModelForm):
@@ -38,6 +40,7 @@ class TakePartForm(forms.ModelForm):
 
 class MarkForm(forms.ModelForm):
     global User
+
     class Meta:
         model = Mark
         fields = ('course', 'student', 'mark')

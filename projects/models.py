@@ -1,7 +1,8 @@
-from datetime import datetime
+from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from profiles.models import YEARS
 from django.conf import settings
+from django.utils import timezone
 User = settings.AUTH_USER_MODEL
 
 
@@ -20,7 +21,7 @@ class Course(models.Model):
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
     start_date = models.DateField(auto_now_add=True)
     end_date = models.DateField()
-    credits = models.IntegerField(null=True, default=0)
+    points = models.IntegerField(null=True, default=0)
     mandatory = models.BooleanField(default=True)
     year = models.IntegerField(choices=YEARS, default=1)
     teacher = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
@@ -39,8 +40,8 @@ class File(models.Model):
 class Mark(models.Model):
     student = models.ForeignKey(User, on_delete=models.CASCADE)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
-    mark = models.IntegerField(default=0)
-    date = models.DateTimeField(default=datetime.now, blank=True)
+    mark = models.PositiveSmallIntegerField(default=1, validators=[MinValueValidator(1), MaxValueValidator(50)])
+    date = models.DateTimeField(default=timezone.now, blank=True)
 
     def __str__(self):
-        return 'Student' + ' ' + str(self.student) + ' ' + str(self.mark) +'/'+str(self.course.credits)
+        return 'Student' + ' ' + str(self.student) + ' ' + str(self.mark) +'/'+str(self.course.points)

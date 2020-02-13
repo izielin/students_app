@@ -200,19 +200,23 @@ class MarkCreateView(BSModalCreateView):
     success_message = 'Success: mark set'
 
     def form_valid(self, form, **kwargs):
-        # TODO: check if form.mark is lower than credits
-        #https://docs.djangoproject.com/en/3.0/ref/models/database-functions/
         form.instance.course = get_object_or_404(Course, pk=self.kwargs.get('pk'))
-        value = Course.objects.filter(pk=self.kwargs.get('pk')).annotate(credits_as_float=Cast('credits', output_field=FloatField())).get()
-        print(value)
-        # if form.instance.mark > value:
-        #     print('większa')
-        #     form.instance.mark = value
+        # checking if number of points is bigger than max
+        # if yes setting the max value
+        # value = Course.objects.filter(pk=self.kwargs.get('pk'))\
+        #                       .annotate(points_as_float=Cast('points', output_field=FloatField())).get()
+        # if form.instance.mark > int(value.points_as_float):
+        #     form.instance.mark = int(value.points_as_float)
         return super().form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        course = Course.objects.get(pk=self.kwargs.get('pk'))
+        context = super(MarkCreateView, self).get_context_data(**kwargs)
+        context['max_mark'] = course.points
+        return context
 
     def get_success_url(self, **kwargs):
         pk = self.object.course.id
-        print(pk)
         return reverse('course', kwargs={'pk': pk})
 
 
