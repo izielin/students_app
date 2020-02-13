@@ -12,6 +12,8 @@ from django.views import View
 from bootstrap_modal_forms.generic import BSModalCreateView, BSModalUpdateView, BSModalReadView, BSModalDeleteView
 from profiles.models import Profile
 from django.forms.models import model_to_dict
+from django.db.models import FloatField
+from django.db.models.functions import Cast
 
 
 @teacher_required
@@ -106,7 +108,7 @@ class ProjectReadView(BSModalReadView):
     model = Project
     template_name = 'projects/project_shortcut.html'
 
-    #TODO: call subscribe function
+    # TODO: call subscribe function
 
     # def (self, project_id, **kwargs):
     #     subscribe(self.request, project_id)
@@ -117,9 +119,9 @@ def projects(request, pk):
     courses = Course.objects.filter(project=pk)
     subscribe(request, pk)
     context = {
-            'project': projects_data,
-            'courses': courses,
-        }
+        'project': projects_data,
+        'courses': courses,
+    }
     return render(request, 'projects/project.html', context)
 
 
@@ -198,8 +200,14 @@ class MarkCreateView(BSModalCreateView):
     success_message = 'Success: mark set'
 
     def form_valid(self, form, **kwargs):
-        #TODO: check if form.mark is lower than credits
+        # TODO: check if form.mark is lower than credits
+        #https://docs.djangoproject.com/en/3.0/ref/models/database-functions/
         form.instance.course = get_object_or_404(Course, pk=self.kwargs.get('pk'))
+        value = Course.objects.filter(pk=self.kwargs.get('pk')).annotate(credits_as_float=Cast('credits', output_field=FloatField())).get()
+        print(value)
+        # if form.instance.mark > value:
+        #     print('większa')
+        #     form.instance.mark = value
         return super().form_valid(form)
 
     def get_success_url(self, **kwargs):
