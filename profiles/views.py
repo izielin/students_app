@@ -69,6 +69,7 @@ class ProfileUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     def test_func(self):
         return True
 
+
 def load_cities(request):
     country_id = request.GET.get('country')
     cities = City.objects.filter(country_id=country_id).order_by('name')

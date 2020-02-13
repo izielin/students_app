@@ -1,4 +1,5 @@
-<form method="post" action="">
+{% load crispy_forms_tags %}
+<form method="post" enctype="multipart/form-data" id="markForm" data-student-url="{% url 'ajax_load_students' %}" novalidate>
   {% csrf_token %}
 
  <div class="modal-header">
@@ -9,20 +10,33 @@
   </div>
 
   <div class="modal-body">
-    {% for field in form %}
-      <div class="form-group{% if field.errors %} invalid{% endif %}">
-        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-        {{ field }}
-        {% for error in field.errors %}
-          <p class="help-block">{{ error }}</p>
-        {% endfor %}
-      </div>
-    {% endfor %}
+    <table>
+      {{ form|crispy }}
+    </table>
   </div>
 
   <div class="modal-footer">
     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-    <button type="button" class="submit-btn btn btn-primary">Create</button>
+    <button type="submit" class="submit-btn btn btn-primary">Create</button>
   </div>
-
 </form>
+
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script>
+$("#id_course").change(function () {
+  var url = $("#markForm").attr("data-student-url");
+  var courseId = $(this).val();
+
+  $.ajax({
+    url: url,
+    data: {
+      'course': courseId
+    },
+    success: function (data) {
+        console.log(data);
+      $("#id_student").html(data);
+    }
+  });
+
+});
+</script>

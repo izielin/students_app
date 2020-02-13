@@ -1,3 +1,4 @@
+from datetime import datetime
 from django.db import models
 from profiles.models import YEARS
 from django.conf import settings
@@ -39,7 +40,7 @@ class Mark(models.Model):
     student = models.ForeignKey(User, on_delete=models.CASCADE)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     mark = models.IntegerField(default=0)
-
+    date = models.DateTimeField(default=datetime.now)
 
     def __str__(self):
         return 'Student' + ' ' + str(self.student) + ' ' + str(self.mark)

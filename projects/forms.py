@@ -36,12 +36,19 @@ class TakePartForm(forms.ModelForm):
 
 
 class MarkForm(forms.ModelForm):
-    #TODO: take only 'subscribers'
-     def __init__(self, *args, **kwargs):
-         self.request = kwargs.pop('request', None)
-         super(MarkForm, self).__init__(*args, **kwargs)
+    class Meta:
+        model = Mark
+        fields = ('course', 'student', 'mark',)
 
-     class Meta:
-         model = Mark
-         fields = ('student', 'mark', )
-
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request', None)
+        super(MarkForm, self).__init__(*args, **kwargs)
+        self.fields['student'].queryset = Profile.objects.none()
+        if 'course' in self.data:
+            try:
+                course_data = int(self.data.get('course'))
+                self.fields['student'].queryset = Profile.objects.filter(projects__course__id=course_data).order_by('last_name')
+            except (ValueError, TypeError):
+                pass
+        elif self.instance.pk:
+            self.fields['student'].queryset = self.instance.profile.projects_set.order_by('first_name')

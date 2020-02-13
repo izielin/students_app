@@ -16,5 +16,7 @@ urlpatterns = [
     path('course/<int:pk>', views.CourseView.as_view(), name='course'),
     path('upload/<int:pk>', views.delete_file, name='upload_delete'),
     path('course/<int:pk>/setmark/', views.MarkCreateView.as_view(), name='mark'),
+    path('ajax/load-students/', views.load_students, name='ajax_load_students'),
+
 ]
 

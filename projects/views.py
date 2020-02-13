@@ -197,14 +197,21 @@ class MarkCreateView(BSModalCreateView):
     template_name = 'projects/mark.html'
     success_message = 'Success: mark set'
 
-
     def form_valid(self, form, **kwargs):
         #TODO: check if form.mark is lower than credits
         form.instance.course = get_object_or_404(Course, pk=self.kwargs.get('pk'))
+        print(File.objects.filter(course=self.kwargs.get('pk')).values("sender"))
+
         return super().form_valid(form)
 
     def get_success_url(self, **kwargs):
-        #TODO set correctly success url
-        pk = self.course.id
+        pk = self.object.file.course.id
         print(pk)
         return reverse('course', kwargs={'pk': pk})
+
+
+def load_students(request):
+    course_data = request.GET.get('course')
+    student = Profile.objects.filter(projects__course__id=course_data).order_by('last_name')
+    print(student)
+    return render(request, 'projects/student_dropdown_list_options.html', {'students': student})
