@@ -1,4 +1,4 @@
 <option value="">---------</option>
 {% for student in students %}
-<option value="{{ student.pk }}">{{ student.profile.first_name }}{{ student.profile.last_name }}</option>
+<option value="{{ student.pk }}">{{ student.profile.first_name }} {{ student.profile.last_name }}</option>
 {% endfor %}

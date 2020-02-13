@@ -40,7 +40,7 @@ class Mark(models.Model):
     student = models.ForeignKey(User, on_delete=models.CASCADE)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     mark = models.IntegerField(default=0)
-    date = models.DateTimeField(default=datetime.now)
+    date = models.DateTimeField(default=datetime.now, blank=True)
 
     def __str__(self):
-        return 'Student' + ' ' + str(self.student) + ' ' + str(self.mark)
+        return 'Student' + ' ' + str(self.student) + ' ' + str(self.mark) +'/'+str(self.course.credits)

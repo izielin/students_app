@@ -3,7 +3,8 @@ from .models import Project, Course, File, Mark
 from .widgets import FengyuanChenDatePickerInput
 from profiles.models import Profile
 from bootstrap_modal_forms.forms import BSModalForm
-
+from django.contrib.auth import get_user_model
+User = get_user_model()
 
 class FileForm(forms.ModelForm):
     class Meta:
@@ -36,9 +37,10 @@ class TakePartForm(forms.ModelForm):
 
 
 class MarkForm(forms.ModelForm):
+    global User
     class Meta:
         model = Mark
-        fields = ('course', 'student', 'mark',)
+        fields = ('course', 'student', 'mark')
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
@@ -46,8 +48,7 @@ class MarkForm(forms.ModelForm):
         self.fields['student'].queryset = Profile.objects.none()
         if 'course' in self.data:
             try:
-                course_data = int(self.data.get('course'))
-                self.fields['student'].queryset = Profile.objects.filter(projects__course__id=course_data).order_by('last_name')
+                self.fields['student'].queryset = User.objects.all()
             except (ValueError, TypeError):
                 pass
         elif self.instance.pk:
