@@ -22,7 +22,10 @@
                             <p class="text-secondary"><span class="mx-4 my-4"><i class="fas fa-envelope-open-text"></i></span>{{ profile.user.email|default_if_none:"brak danych" }}</p>
                             <hr>
                                 <h2 class="account-heading">Taken courses</h2>
-                                <p>names of courses</p>
+                               {% for project in profile.projects.all %}
+                                        <li>{{ project }}</li>
+                                {% endfor %}
+
                     </div>
                   </div>
 

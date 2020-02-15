@@ -57,6 +57,7 @@ def projects_list_for_students(request):
     user = Profile.objects.get(user=request.user)
     context = {
         'projects': projects,
+        'user': user,
     }
     return render(request, "projects/projects_list_for_students.html", context)
 
@@ -98,7 +99,13 @@ def subscribe(request, pk):
     if request.POST.get('action') == 'post':
         project = Project.objects.get(pk=pk)
         obj = Profile.objects.get(user=request.user)
-        obj.projects.add(project.id)
+        print(obj.projects.all())
+        if project in obj.projects.all():
+            obj.projects.remove(project.id)
+            print(obj.projects.all())
+        else:
+            obj.projects.add(project.id)
+            print(obj.projects.all())
         obj.save()
         data = {'is_valid': True, 'project': str(project)}
         return JsonResponse(data)
@@ -117,10 +124,13 @@ class ProjectReadView(BSModalReadView):
 def projects(request, pk):
     projects_data = Project.objects.get(id=pk)
     courses = Course.objects.filter(project=pk)
+    profile = Profile.objects.get(user=request.user)
     subscribe(request, pk)
+
     context = {
         'project': projects_data,
         'courses': courses,
+        'profile': profile,
     }
     return render(request, 'projects/project.html', context)
 

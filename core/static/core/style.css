@@ -133,8 +133,72 @@ a.article-title:hover {
 	 background: #1ecd97;
 }
  .validate:after {
-    font-family: 'Font Awesome\ 5 Free';
+     font-family: 'Font Awesome\ 5 Free';
 	 content: "\f00c";
+}
+ @keyframes rotating {
+	 from {
+		 transform: rotate(0deg);
+	}
+	 to {
+		 transform: rotate(360deg);
+	}
+}
+
+.unsub_button {
+	 outline: none;
+	 height: 40px;
+	 text-align: center;
+	 width: 90px;
+	 border-radius: 40px;
+	 background: #1ecd97;
+	 border: 2px solid #1ecd97;
+	 color: #fff;
+	 letter-spacing: 1px;
+	 font-size: 12px;
+	 font-weight: bold;
+	 cursor: pointer;
+}
+
+ .unsub_button:after {
+	 font-family: 'Font Awesome\ 5 Free';
+	 content: "\f00c";
+}
+  .unsub_button:hover {
+	 color: #fff;
+	 background: gray;
+     border: 2px solid gray;
+}
+    .unsub_button:hover:after {
+	content: "unsubscribe";
+}
+
+        .unsub_button:active {
+	 letter-spacing: 2px;
+}
+ .onclic_unsub {
+	 width: 40px;
+	 border-color: #bbb;
+	 background-color: white;
+	 border-width: 3px;
+	 font-size: 0;
+	 border-left-color: gray;
+	 animation: rotating 2s 0.25s linear infinite;
+}
+ .onclic_unsub:after {
+	 content: "";
+}
+ .onclic_unsub:hover {
+	 color: white;
+	 background: gray;
+}
+ .validate_unsub {
+	 font-size: 13px;
+	 color: #1ecd97;
+	 background: white;
+}
+ .validate_unsub:after {
+ content: "Take Part";
 }
  @keyframes rotating {
 	 from {
