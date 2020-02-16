@@ -115,7 +115,7 @@ class ProjectReadView(BSModalReadView):
     model = Project
     template_name = 'projects/project_shortcut.html'
 
-    # TODO: call subscribe function
+    # TODO: call subscribe function (12.12.19)
 
     # def (self, project_id, **kwargs):
     #     subscribe(self.request, project_id)
@@ -125,12 +125,18 @@ def projects(request, pk):
     projects_data = Project.objects.get(id=pk)
     courses = Course.objects.filter(project=pk)
     profile = Profile.objects.get(user=request.user)
+    marks = Mark.objects.filter(student=profile.user)
     subscribe(request, pk)
+
+    max_points = sum([i.points for i in courses])
+    user_points = sum([i.mark for i in marks])
 
     context = {
         'project': projects_data,
         'courses': courses,
         'profile': profile,
+        'max_points': max_points,
+        'user_points': user_points,
     }
     return render(request, 'projects/project.html', context)
 
@@ -209,20 +215,16 @@ class MarkCreateView(BSModalCreateView):
     template_name = 'projects/mark.html'
     success_message = 'Success: mark set'
 
+    # TODO: double marks
     def form_valid(self, form, **kwargs):
         form.instance.course = get_object_or_404(Course, pk=self.kwargs.get('pk'))
-        # checking if number of points is bigger than max
-        # if yes setting the max value
-        # value = Course.objects.filter(pk=self.kwargs.get('pk'))\
-        #                       .annotate(points_as_float=Cast('points', output_field=FloatField())).get()
-        # if form.instance.mark > int(value.points_as_float):
-        #     form.instance.mark = int(value.points_as_float)
         return super().form_valid(form)
 
     def get_context_data(self, **kwargs):
         course = Course.objects.get(pk=self.kwargs.get('pk'))
         context = super(MarkCreateView, self).get_context_data(**kwargs)
         context['max_mark'] = course.points
+        context['course'] = course
         return context
 
     def get_success_url(self, **kwargs):
@@ -232,6 +234,9 @@ class MarkCreateView(BSModalCreateView):
 
 def load_students(request):
     course_data = request.GET.get('course')
+    file = File.objects.filter(course=course_data)
+    senders = [i.sender for i in file]
     student = Profile.objects.filter(projects__course__id=course_data).order_by('last_name')
-    users = [i.user for i in student]
+    students = [i.user for i in student]
+    users = list(set(senders).intersection(students))
     return render(request, 'projects/student_dropdown_list_options.html', {'students': users})
