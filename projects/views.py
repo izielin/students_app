@@ -183,10 +183,30 @@ class CourseDeleteView(DeleteView):
 class CourseView(View):
     def get(self, request, pk):
         course_data = Course.objects.get(id=pk)
+        teacher = Profile.objects.get(user=course_data.teacher)
+        user = self.request.user
+        try:
+            user_points = Mark.objects.get(student=self.request.user, course=course_data).mark
+            max_points = course_data.points
+        except Mark.DoesNotExist:
+            user_points = ''
+            max_points = course_data.points
+
+        files = File.objects.filter(course=pk)
+        senders = [i.sender for i in files]
+        student = Profile.objects.filter(projects__course__id=course_data.id).order_by('last_name')
+        students = [i.user for i in student]
+        late = list(set(students)-set(senders))
+        late = Profile.objects.filter(user__in=late)
         context = {
-            'files': File.objects.filter(course=pk),
+            'files': files,
             'course': course_data,
+            'teacher': teacher,
+            'user': user,
+            'user_points': user_points,
+            'max_points': max_points,
             'pk': pk,
+            'late': late,
         }
         return render(self.request, 'projects/course.html', context)
 
