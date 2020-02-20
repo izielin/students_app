@@ -1,5 +1,71 @@
 {% extends "core/base.html" %}
 {% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-8 col-xs-12">
+            <div class="content-section">
+            <div class="media">
+                <div class="media-body">
+                <div class="row">
+                    <div class="col-11">
+                        <h3 class="text-uppercase font-weight-bold">{{ project.name }}</h3><hr>
+                        <div class="row">
+                            <div class="col-9">
+                                {% if project.summary %}
+                                    <p class="text-justify" style="font-size: 13px;">{{ project.summary }}</p>
+                                {% endif %}
+                            </div>
+                            <div class="col-3">
+                                {% if project.teacher %}
+                                  <h6>Teacher:</h6>
+                                    {{ project.teacher.first_name }} {{ project.teacher.last_name }}<br><br>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                </div>
+            </div>
+            </div>
+        </div>
+    <div class="col-md-4 col-xs-12 content-section">
+        {% if user.is_student %}
+            <h6>Current Grade</h6><br/>
+            <h1 class="text-center" style="font-size: 80px; font-weight: lighter">
+            {% if user_points %}
+                {{ user_points }}/{{ max_points }}
+            {% else %}
+                &mdash;
+            {% endif %}
+            </h1><hr>
+        {% endif %}
+        <div class="card-box">
+            {% if user.is_student %}
+            {% if not project in profile.projects.all %}
+                <form method="POST" id="post-form">
+                    {% csrf_token %}
+                    <button type="submit"  id="button" class="mx-auto submit_button"></button>
+                </form>
+                {% else %}
+                <form method="POST" id="post-form-unsub">
+                    {% csrf_token %}
+                    <button type="submit"  id="unsub" class="mx-auto unsub_button"></button>
+                </form>
+            {% endif %}
+            {% else %}
+            <div style="margin: 20px 0;">
+                <a href="{% url 'course_add' project.id %}">
+                   <span class="mx-2"><i class="fas fa-plus"></i></span>Add Course
+                </a>
+            </div>
+            {% endif %}
+        </div>
+        </div>
+    </div>
+</div>
+
+
+
     <div class="content-section">
       <div class="media">
         <div class="media-body">
@@ -9,17 +75,7 @@
                 <a href="{% url 'course_add' project.id %}"> <i class="fas fa-plus"></i></a>
 
            </div>
-            {% if not project in profile.projects.all %}
-                <form method="POST" id="post-form">
-                    {% csrf_token %}
-                    <button type="submit"  id="button" class="submit_button"></button>
-                </form>
-                {% else %}
-                <form method="POST" id="post-form-unsub">
-                    {% csrf_token %}
-                    <button type="submit"  id="unsub" class="unsub_button"></button>
-                </form>
-            {% endif %}
+
 
 
             <div class="media">
@@ -31,11 +87,7 @@
       </div>
     <table class="table table-striped table-hover">
     <thead class="thead-dark">
-      <tr>
-        <th>mandatory</th>
-        <th>Name</th>
-        <th>points</th>
-      </tr>
+
     </thead>
     <tbody>
       {% for course in courses %}

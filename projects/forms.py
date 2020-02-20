@@ -28,7 +28,7 @@ class CourseForm(forms.ModelForm):
 
     class Meta:
         model = Course
-        fields = ['name', 'summary', 'end_date', 'points', 'mandatory', 'year']
+        fields = ['name', 'summary', 'end_date', 'points', 'year']
 
 
 class TakePartForm(forms.ModelForm):

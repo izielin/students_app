@@ -237,7 +237,9 @@ class MarkCreateView(BSModalCreateView):
 
     # TODO: double marks
     def form_valid(self, form, **kwargs):
+        print("sanity check I")
         form.instance.course = get_object_or_404(Course, pk=self.kwargs.get('pk'))
+        print("sanity check II")
         return super().form_valid(form)
 
     def get_context_data(self, **kwargs):

@@ -22,7 +22,6 @@ class Course(models.Model):
     start_date = models.DateField(auto_now_add=True)
     end_date = models.DateField()
     points = models.IntegerField(null=True, default=0)
-    mandatory = models.BooleanField(default=True)
     year = models.IntegerField(choices=YEARS, default=1)
     teacher = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
 

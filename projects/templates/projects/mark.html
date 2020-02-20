@@ -1,6 +1,4 @@
 {% load crispy_forms_tags %}
-<form method="post" enctype="multipart/form-data" id="markForm" data-student-url="{% url 'ajax_load_students' %}" novalidate>
-  {% csrf_token %}
 
  <div class="modal-header">
     <h5 class="modal-title"> Set mark</h5>
@@ -8,10 +6,13 @@
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
+<form method="post" enctype="multipart/form-data" id="markForm" data-student-url="{% url 'ajax_load_students' %}" novalidate>
+  {% csrf_token %}
+
+
 
   <div class="modal-body">
     <table>
-            {% csrf_token %}
          <div class="form-group">
                 <input type="hidden" name="course" value="{{ course.id }}" required id="id_course">
          </div>
