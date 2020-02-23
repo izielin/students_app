@@ -138,10 +138,8 @@
   </div>
 </div>
 <script type="text/javascript">
-$(document).ready(function() {
-    $(".set-mark").each(function () {
-      $(this).modalForm({formURL: $(this).data('id')});
-    });
+$(function() {
+    $(".set-mark").modalForm({formURL: "{% url 'mark' pk=course.pk %}"});
 });
 </script>
 {% endblock content %}

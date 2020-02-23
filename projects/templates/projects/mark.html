@@ -1,15 +1,20 @@
 {% load crispy_forms_tags %}
 
- <div class="modal-header">
+
+<form method="post" action="/setmark">
+  {% csrf_token %}
+
+<div class="modal-header">
     <h5 class="modal-title"> Set mark</h5>
     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
-<form method="post" enctype="multipart/form-data" id="markForm" data-student-url="{% url 'ajax_load_students' %}" novalidate>
-  {% csrf_token %}
-
-
+<div class="{% if form.non_field_errors %}invalid{% endif %} mb-2">
+      {% for error in form.non_field_errors %}
+        {{ error }}
+      {% endfor %}
+    </div>
 
   <div class="modal-body">
     <table>
@@ -17,41 +22,32 @@
                 <input type="hidden" name="course" value="{{ course.id }}" required id="id_course">
          </div>
          <div class="form-group">
-                {{ form.student.label_tag }}<br/>
-                {{ form.student }}
+         <label for="id_student">Choose a student:</label><br>
+         <select id="id_student"  required name="student">
+         {%  if students %}
+             <option>Choose a student:</option>
+         {% else %}
+           <option>No more students to mark.</option>
+         {% endif %}
+                {% for student in students %}
+                <option value="{{ student.pk }}">{{ student.profile.first_name }} {{ student.profile.last_name }}</option>
+                {% endfor %}
+         </select>
             </div>
-         <div class="form-group">
+         <div id="mark" class="form-group invisible">
              <label for="id_mark">Number of points (0-{{ max_mark }}):</label><br>
                 <input type="number" name="mark"  required  min="1" max="{{max_mark}}" id="id_mark">
             </div>
     </table>
   </div>
-
   <div class="modal-footer">
     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-    <button type="submit" class="submit-btn btn btn-primary">Create</button>
+    <button type="submit" class="btn btn btn-primary">Create</button>
   </div>
 </form>
 
-<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
 <script>
-    $(document).ready(function() {
-    console.log('sanity check');
-var input = document.getElementById("id_course");
-
-  var url = $("#markForm").attr("data-student-url");
-  var courseId = input.value;
-  console.log(courseId);
-
-  $.ajax({
-    url: url,
-    data: {
-      'course': courseId
-    },
-    success: function (data) {
-        console.log(data);
-      $("#id_student").html(data);
-    }
-  });
-});
+    $('#id_student').change(function () {
+        $('#mark').removeClass('invisible');
+    });
 </script>

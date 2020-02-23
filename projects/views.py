@@ -6,14 +6,11 @@ from django.db.models import Q
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.urls import reverse_lazy, reverse
 from core.decorators import teacher_required
-from django.shortcuts import render, redirect, HttpResponseRedirect
 from django.http import JsonResponse
-from django.views import View
 from bootstrap_modal_forms.generic import BSModalCreateView, BSModalUpdateView, BSModalReadView, BSModalDeleteView
 from profiles.models import Profile
-from django.forms.models import model_to_dict
-from django.db.models import FloatField
-from django.db.models.functions import Cast
+from django.contrib.auth import get_user_model
+User = get_user_model()
 
 
 @teacher_required
@@ -180,38 +177,9 @@ class CourseDeleteView(DeleteView):
         return reverse('project', kwargs={'pk': pk})
 
 
-class CourseView(View):
-    def get(self, request, pk):
-        course_data = Course.objects.get(id=pk)
-        teacher = Profile.objects.get(user=course_data.teacher)
-        user = self.request.user
-        try:
-            user_points = Mark.objects.get(student=self.request.user, course=course_data).mark
-            max_points = course_data.points
-        except Mark.DoesNotExist:
-            user_points = ''
-            max_points = course_data.points
-
-        files = File.objects.filter(course=pk)
-        senders = [i.sender for i in files]
-        student = Profile.objects.filter(projects__course__id=course_data.id).order_by('last_name')
-        students = [i.user for i in student]
-        late = list(set(students)-set(senders))
-        late = Profile.objects.filter(user__in=late)
-        context = {
-            'files': files,
-            'course': course_data,
-            'teacher': teacher,
-            'user': user,
-            'user_points': user_points,
-            'max_points': max_points,
-            'pk': pk,
-            'late': late,
-        }
-        return render(self.request, 'projects/course.html', context)
-
-    def post(self, request, pk):
-        form = FileForm(self.request.POST, self.request.FILES)
+def course_list(request, pk):
+    if request.method == "POST":
+        form = FileForm(request.POST, request.FILES)
         if form.is_valid():
             form.instance.course = pk
             form.instance.sender = request.user
@@ -220,6 +188,34 @@ class CourseView(View):
         else:
             data = {'is_valid': False}
         return JsonResponse(data)
+
+    course_data = Course.objects.get(id=pk)
+    teacher = Profile.objects.get(user=course_data.teacher)
+    user = request.user
+    user_points = ''
+    max_points = course_data.points
+    try:
+        user_points = Mark.objects.get(student=request.user, course=course_data).mark
+    except Mark.DoesNotExist :
+        user_points = user_points
+
+    files = File.objects.filter(course=pk)
+    senders = [i.sender for i in files]
+    student = Profile.objects.filter(projects__course__id=course_data.id).order_by('last_name')
+    students = [i.user for i in student]
+    late = list(set(students)-set(senders))
+    late = Profile.objects.filter(user__in=late)
+    context = {
+        'files': files,
+        'course': course_data,
+        'teacher': teacher,
+        'user': user,
+        'user_points': user_points,
+        'max_points': max_points,
+        'pk': pk,
+        'late': late,
+    }
+    return render(request, 'projects/course.html', context)
 
 
 def delete_file(request, pk):
@@ -230,35 +226,26 @@ def delete_file(request, pk):
 
 
 class MarkCreateView(BSModalCreateView):
-    model = Mark
     form_class = MarkForm
     template_name = 'projects/mark.html'
     success_message = 'Success: mark set'
 
-    # TODO: double marks
-    def form_valid(self, form, **kwargs):
-        print("sanity check I")
-        form.instance.course = get_object_or_404(Course, pk=self.kwargs.get('pk'))
-        print("sanity check II")
+    def form_valid(self, form):
+        form.instance.course = Course.objects.get(pk=self.kwargs.get('pk'))
         return super().form_valid(form)
 
     def get_context_data(self, **kwargs):
         course = Course.objects.get(pk=self.kwargs.get('pk'))
+        mark = Mark.objects.all()
+        file = File.objects.filter(course=course.id)
+        student = Profile.objects.filter(projects__course__id=course.id).order_by('last_name')
+        students = list(set([i.sender for i in file]).intersection([i.user for i in student]) - set([i.student for i in mark]))
         context = super(MarkCreateView, self).get_context_data(**kwargs)
         context['max_mark'] = course.points
         context['course'] = course
+        context['students'] = students
         return context
 
     def get_success_url(self, **kwargs):
         pk = self.object.course.id
         return reverse('course', kwargs={'pk': pk})
-
-
-def load_students(request):
-    course_data = request.GET.get('course')
-    file = File.objects.filter(course=course_data)
-    senders = [i.sender for i in file]
-    student = Profile.objects.filter(projects__course__id=course_data).order_by('last_name')
-    students = [i.user for i in student]
-    users = list(set(senders).intersection(students))
-    return render(request, 'projects/student_dropdown_list_options.html', {'students': users})

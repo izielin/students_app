@@ -39,20 +39,11 @@ class TakePartForm(forms.ModelForm):
 
 
 class MarkForm(forms.ModelForm):
-    global User
-
-    class Meta:
-        model = Mark
-        fields = ('course', 'student', 'mark')
-
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
         super(MarkForm, self).__init__(*args, **kwargs)
-        self.fields['student'].queryset = Profile.objects.none()
-        if 'course' in self.data:
-            try:
-                self.fields['student'].queryset = User.objects.all()
-            except (ValueError, TypeError):
-                pass
-        elif self.instance.pk:
-            self.fields['student'].queryset = self.instance.profile.projects_set.order_by('first_name')
+
+    class Meta:
+        model = Mark
+        exclude = ['course']
+
