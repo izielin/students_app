@@ -3,16 +3,39 @@ from django.db import models
 from profiles.models import YEARS
 from django.conf import settings
 from django.utils import timezone
+from PIL import Image
+from random import choice
+from os.path import join as path_join
+from os import listdir
+from os.path import isfile
 User = settings.AUTH_USER_MODEL
+
+
+def random_img():
+    dir_path = 'media/default'
+    return_path = 'default'
+    files = [content for content in listdir(dir_path) if isfile(path_join(dir_path, content))]
+    return path_join(return_path, choice(files))
 
 
 class Project(models.Model):
     name = models.CharField(max_length=150)
     summary = models.TextField(null=True, blank=True)
     teacher = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    picture = models.ImageField(default=random_img, upload_to='project_pics')
 
     def __str__(self):
         return self.name
+
+    def save(self, **kwargs):
+        super().save()
+
+        img = Image.open(self.picture.path)
+
+        if img.height > 270 or img.width > 480:
+            output_size = (480, 270)
+            img.thumbnail(output_size)
+            img.save(self.picture.path)
 
 
 class Course(models.Model):

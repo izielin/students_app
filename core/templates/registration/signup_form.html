@@ -3,16 +3,19 @@
 
 {% block javascript %}
   <script>
-    $("#id_username").change(function () {
-      var form = $(this).closest("form");
-      $.ajax({
-        url: form.attr("data-validate-username-url"),
+    $("form").change(function () {
+        let form = $(this).closest("form");
+        $.ajax({
+        url: form.attr("data-validate-username-or-email-url"),
         data: form.serialize(),
         dataType: 'json',
         success: function (data) {
-          if (data.is_taken) {
-            alert(data.error_message);
+          if (data.username_is_taken) {
+            alert(data.username_error_message);
             document.getElementById("id_username").value = "";
+          } else if(data.email_is_taken) {
+            alert(data.email_error_message);
+            document.getElementById("id_email").value = "";
           }
         }
       });
@@ -28,7 +31,7 @@
       <div class="card-body">
 
     <h2>Sign up as a {{ user_type }}</h2>
-      <form method="post" novalidate data-validate-username-url="{% url 'validate_username' %}">
+      <form method="post" novalidate data-validate-username-or-email-url="{% url 'validate_username_or_email' %}">
         {% csrf_token %}
         <input type="hidden" name="next" value="{{ next }}">
         {{ form|crispy }}

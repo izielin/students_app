@@ -1,11 +1,10 @@
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponseRedirect, Http404
+from django.http import Http404
 from django.shortcuts import render
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.views.generic import CreateView, UpdateView
+from django.views.generic import UpdateView
 from django.urls import reverse_lazy
 from .models import Profile, City
-from .forms import ProfileForm
 from django.db.models import Q
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 

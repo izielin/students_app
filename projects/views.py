@@ -5,7 +5,7 @@ from .models import Project, File, Course, Mark
 from django.db.models import Q
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.urls import reverse_lazy, reverse
-from core.decorators import teacher_required
+from core.decorators import teacher_required, student_required
 from django.http import JsonResponse
 from bootstrap_modal_forms.generic import BSModalCreateView, BSModalUpdateView, BSModalReadView, BSModalDeleteView
 from profiles.models import Profile
@@ -38,7 +38,7 @@ def projects_list(request):
     }
     return render(request, "projects/project_list.html", context)
 
-
+@student_required
 def projects_list_for_students(request):
     project_list = Project.objects.order_by('name')
     paginator = Paginator(project_list, 15)  # 15 project per page
@@ -119,6 +119,7 @@ class ProjectReadView(BSModalReadView):
 
 
 def projects(request, pk):
+    # TODO: check js in template, change delete form to bootstrap modal
     projects_data = Project.objects.get(id=pk)
     courses = Course.objects.filter(project=pk)
     profile = Profile.objects.get(user=request.user)
@@ -192,13 +193,13 @@ def course_list(request, pk):
     course_data = Course.objects.get(id=pk)
     teacher = Profile.objects.get(user=course_data.teacher)
     user = request.user
-    user_points = ''
+    user_points = None
     max_points = course_data.points
     try:
         user_points = Mark.objects.get(student=request.user, course=course_data).mark
     except Mark.DoesNotExist :
         user_points = user_points
-
+# TODO: check what is happened witch marks
     files = File.objects.filter(course=pk)
     senders = [i.sender for i in files]
     student = Profile.objects.filter(projects__course__id=course_data.id).order_by('last_name')
