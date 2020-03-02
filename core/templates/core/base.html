@@ -75,16 +75,18 @@
 {% if messages %}
 <ul class="messages">
     {% for message in messages %}
-    <li{% if message.tags %} class="{{ message.tags }}"{% endif %} style="list-style-type: none;">
-              <div class="alert alert-success alert-dismissible">
+              <div class="alert alert-{{ message.tags }} alert-dismissible">
               <button type="button" class="close" data-dismiss="alert">&times;</button>
-              <strong>Success!</strong> {{message}}
+              {{ message|safe }}
             </div>
-        </li>
     {% endfor %}
 </ul>
 {% endif %}
-
+<div class="modal fade" tabindex="-1" role="dialog" id="modal">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content"></div>
+  </div>
+</div>
   {% block content %}{% endblock %}
 </main>
 

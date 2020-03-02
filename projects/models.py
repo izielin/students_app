@@ -1,3 +1,4 @@
+import uuid
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from profiles.models import YEARS
@@ -5,17 +6,22 @@ from django.conf import settings
 from django.utils import timezone
 from PIL import Image
 from random import choice
-from os.path import join as path_join
-from os import listdir
-from os.path import isfile
+from os.path import join as path_join, isfile
+import os
 User = settings.AUTH_USER_MODEL
 
 
 def random_img():
     dir_path = 'media/default'
     return_path = 'default'
-    files = [content for content in listdir(dir_path) if isfile(path_join(dir_path, content))]
+    files = [content for content in os.listdir(dir_path) if isfile(path_join(dir_path, content))]
     return path_join(return_path, choice(files))
+
+
+def get_file_path(instance, filename):
+    ext = filename.split('.')[-1]
+    filename = "%s.%s" % (instance.sender, ext)
+    return os.path.join(Course.objects.get(pk=instance.course).name, filename)
 
 
 class Project(models.Model):
@@ -53,7 +59,7 @@ class Course(models.Model):
 
 
 class File(models.Model):
-    file = models.FileField(upload_to='files/')
+    file = models.FileField(upload_to=get_file_path)
     uploaded_at = models.DateTimeField(auto_now_add=True)
     course = models.IntegerField(default="")
     sender = models.ForeignKey(User, on_delete=models.CASCADE, null=True)

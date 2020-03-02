@@ -1,4 +1,6 @@
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404, HttpResponseRedirect
+from django.utils.decorators import method_decorator
 from django.views.generic import CreateView, UpdateView, DeleteView
 from .forms import ProjectForm, CourseForm, FileForm, MarkForm
 from .models import Project, File, Course, Mark
@@ -12,7 +14,7 @@ from profiles.models import Profile
 from django.contrib.auth import get_user_model
 User = get_user_model()
 
-
+@login_required
 @teacher_required
 def projects_list(request):
     # good to know - capital letters have priority over lowercase one in alphabetical sorting
@@ -63,6 +65,7 @@ class ProjectCreateView(BSModalCreateView):
     model = Project
     form_class = ProjectForm
     success_url = reverse_lazy('project_list')
+    success_message = 'Success: Project was created.'
 
     def form_valid(self, form, **kwargs):
         form.instance.teacher = self.request.user
@@ -139,6 +142,7 @@ def projects(request, pk):
     return render(request, 'projects/project.html', context)
 
 
+@method_decorator([login_required, teacher_required], name='dispatch')
 class CourseCreateView(CreateView):
     model = Course
     form_class = CourseForm
@@ -196,15 +200,16 @@ def course_list(request, pk):
     user_points = None
     max_points = course_data.points
     try:
-        user_points = Mark.objects.get(student=request.user, course=course_data).mark
-    except Mark.DoesNotExist :
+        user_points = Mark.objects.get(student=user, course=course_data).mark
+    except Mark.DoesNotExist:
         user_points = user_points
-# TODO: check what is happened witch marks
     files = File.objects.filter(course=pk)
     senders = [i.sender for i in files]
     student = Profile.objects.filter(projects__course__id=course_data.id).order_by('last_name')
     students = [i.user for i in student]
-    late = list(set(students)-set(senders))
+    m_students = Mark.objects.filter(student__in=students)
+    marked = [i.student for i in m_students]
+    late = list(set(students)-set(senders)-set(marked))
     late = Profile.objects.filter(user__in=late)
     context = {
         'files': files,
@@ -215,6 +220,7 @@ def course_list(request, pk):
         'max_points': max_points,
         'pk': pk,
         'late': late,
+        'marked': marked,
     }
     return render(request, 'projects/course.html', context)
 

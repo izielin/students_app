@@ -99,7 +99,18 @@
             <div style="margin: 20px 0;">
                 <a href="{% url 'course_add' project.id %}">
                    <span class="mx-2"><i class="fas fa-plus"></i></span>Add Course
-                </a>
+                </a><br><br>
+
+           <button type="button" class="update-project btn btn-sm btn-primary" data-id="{% url 'project_edit' project.pk %}" style=" background: none!important;
+  border: none; color: #007bff">
+        <i class="fas fa-edit"></i> Edit Project
+      </button><br><br>
+      <button type="button" class="delete-project btn btn-sm btn-danger" data-id="{% url 'project_delete' project.pk %}" style=" background: none!important;
+  border: none; color: #007bff">
+        <i class="fas fa-times-circle"></i> Delete Project
+      </button><br><br>
+
+
             </div>
             {% endif %}
         </div>
@@ -110,6 +121,15 @@
 
 
     <script>
+$(document).ready(function() {
+    $(".update-project").each(function () {
+        $(this).modalForm({formURL: $(this).data('id')});
+    });
+
+    $(".delete-project").each(function () {
+        $(this).modalForm({formURL: $(this).data('id')});
+    });
+});
   $( "#button" ).click(function() {
     $( this ).addClass( "onclic");
     $( this ).addClass( "onclic");

@@ -56,7 +56,7 @@
                             {% if user.is_teacher %}
                                 {% for file in files %}
                                 <tr>
-                                    <td><a href="{{ file.file.url }}">{{ file.file.name }}</a></td>
+                                    <td><a href="{{ file.file.url }}" download>{{ file.file.name }}</a></td>
                                     <td class="text-right">{{ file.uploaded_at|date:'d/m/Y' }}
                                     <td>{{ file.sender }}</td>
                                     <td>
@@ -84,7 +84,8 @@
                 {% endif %}
             </div>
         </div>
-        <div class="col-md-4 col-xs-12 content-section">
+        <div class="col-md-1 d-none d-md-block"></div>
+        <div class="col-md-3 col-xs-12 content-section">
         {% if user.is_student %}
             <h6>Current Grade</h6><br/>
             <h1 class="text-center" style="font-size: 80px; font-weight: lighter">
@@ -98,12 +99,20 @@
         <div class="card-box">
             {% if user.is_student %}
             <div style="margin: 20px 0;">
+            {% if not user in marked %}
                 <button style=" background: none!important;
   border: none; color: #007bff" type="button" class="btn btn-primary js-upload-photos">
                     <span class="mx-2"><i class="fas fa-file-upload"></i></span>Upload new file
                 </button>
+
             <input id="fileupload" type="file" name="file" multiple style="display: none;" data-url="{% url 'course' pk%}"
                    data-form-data='{"csrfmiddlewaretoken": "{{ csrf_token }}"}'>
+            {% else %}
+                <button style=" background: none!important;
+  border: none; color: #007bff" type="button" class="btn btn-primary disabled">
+                    <span class="mx-2"><i class="fas fa-file-upload"></i></span>Upload new file
+                </button>
+                {% endif %}
             </div>
             {% else %}
             <div style="margin: 20px 0;">
@@ -131,11 +140,6 @@
         </div>
         </div>
     </div>
-</div>
-<div class="modal fade" tabindex="-1" role="dialog" id="modal">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content"></div>
-  </div>
 </div>
 <script type="text/javascript">
 $(function() {

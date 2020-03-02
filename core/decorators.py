@@ -1,6 +1,9 @@
 from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.contrib.auth.decorators import user_passes_test
 from django.conf import settings
+from django.contrib import messages
+from django.shortcuts import HttpResponseRedirect
+from django.urls import reverse
 
 
 def anonymous_required(function=None, redirect_url=None):
@@ -21,31 +24,30 @@ def anonymous_required(function=None, redirect_url=None):
     return actual_decorator
 
 
-def student_required(function=None, redirect_field_name=REDIRECT_FIELD_NAME, login_url='login'):
+def student_required(function):
     '''
     Decorator for views that checks that the logged in user is a student,
     redirects to the log-in page if necessary.
     '''
-    actual_decorator = user_passes_test(
-        lambda u: u.is_active and u.is_student,
-        login_url=login_url,
-        redirect_field_name=redirect_field_name
-    )
-    if function:
-        return actual_decorator(function)
-    return actual_decorator
+
+    def _function(request, *args, **kwargs):
+        if not request.user.is_student:
+            messages.info(request, 'Access restricted, for students only')
+            return HttpResponseRedirect(reverse('login'))
+        return function(request, *args, **kwargs)
+
+    return _function
 
 
-def teacher_required(function=None, redirect_field_name=REDIRECT_FIELD_NAME, login_url='login'):
+def teacher_required(function):
     '''
-    Decorator for views that checks that the logged in user is a teacher,
-    redirects to the log-in page if necessary.
-    '''
-    actual_decorator = user_passes_test(
-        lambda u: u.is_active and u.is_teacher,
-        login_url=login_url,
-        redirect_field_name=redirect_field_name
-    )
-    if function:
-        return actual_decorator(function)
-    return actual_decorator
+        Decorator for views that checks that the logged in user is a teacher,
+        redirects to the log-in page if necessary.
+        '''
+    def _function(request, *args, **kwargs):
+        if not request.user.is_teacher:
+            messages.info(request, 'Access restricted, for teachers only')
+            return HttpResponseRedirect(reverse('login'))
+        return function(request, *args, **kwargs)
+
+    return _function
