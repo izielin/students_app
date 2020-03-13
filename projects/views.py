@@ -1,4 +1,6 @@
 from django.contrib.auth.decorators import login_required
+from datetime import datetime, timedelta
+from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import render, get_object_or_404, HttpResponseRedirect
 from django.utils.decorators import method_decorator
 from django.views.generic import CreateView, UpdateView, DeleteView
@@ -12,7 +14,9 @@ from django.http import JsonResponse
 from bootstrap_modal_forms.generic import BSModalCreateView, BSModalUpdateView, BSModalReadView, BSModalDeleteView
 from profiles.models import Profile
 from django.contrib.auth import get_user_model
+
 User = get_user_model()
+
 
 @login_required
 @teacher_required
@@ -39,6 +43,7 @@ def projects_list(request):
         'projects': projects
     }
     return render(request, "projects/project_list.html", context)
+
 
 @student_required
 def projects_list_for_students(request):
@@ -126,7 +131,7 @@ def projects(request, pk):
     projects_data = Project.objects.get(id=pk)
     courses = Course.objects.filter(project=pk)
     profile = Profile.objects.get(user=request.user)
-    marks = Mark.objects.filter(student=profile.user)
+    marks = Mark.objects.filter(student=profile.user, course__in=courses)
     subscribe(request, pk)
 
     max_points = sum([i.points for i in courses])
@@ -207,10 +212,23 @@ def course_list(request, pk):
     senders = [i.sender for i in files]
     student = Profile.objects.filter(projects__course__id=course_data.id).order_by('last_name')
     students = [i.user for i in student]
-    m_students = Mark.objects.filter(student__in=students)
+    m_students = Mark.objects.filter(student__in=students, course=course_data)
     marked = [i.student for i in m_students]
-    late = list(set(students)-set(senders)-set(marked))
-    late = Profile.objects.filter(user__in=late)
+    late_list = list(set(students) - set(senders) - set(marked))
+    late = Profile.objects.filter(user__in=late_list)
+
+    if course_data.end_date <= datetime.today().date():
+        for i in late_list:
+            mark = Mark(student=i, course=course_data, mark=0, date=datetime.today().date())
+            mark.save()
+    for j in senders:
+        try:
+            if Mark.objects.get(student=j, course=course_data) and course_data.end_date <= \
+                                                                   datetime.today().date() + timedelta(days=14):
+                delete_file(request, File.objects.get(sender=j).id)
+        except ObjectDoesNotExist:
+            pass
+
     context = {
         'files': files,
         'course': course_data,
@@ -221,6 +239,7 @@ def course_list(request, pk):
         'pk': pk,
         'late': late,
         'marked': marked,
+        'senders': senders,
     }
     return render(request, 'projects/course.html', context)
 
@@ -243,10 +262,11 @@ class MarkCreateView(BSModalCreateView):
 
     def get_context_data(self, **kwargs):
         course = Course.objects.get(pk=self.kwargs.get('pk'))
-        mark = Mark.objects.all()
+        mark = Mark.objects.filter(course=course)
         file = File.objects.filter(course=course.id)
         student = Profile.objects.filter(projects__course__id=course.id).order_by('last_name')
-        students = list(set([i.sender for i in file]).intersection([i.user for i in student]) - set([i.student for i in mark]))
+        students = list(
+            set([i.sender for i in file]).intersection([i.user for i in student]) - set([i.student for i in mark]))
         context = super(MarkCreateView, self).get_context_data(**kwargs)
         context['max_mark'] = course.points
         context['course'] = course

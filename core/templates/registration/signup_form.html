@@ -31,7 +31,7 @@
       <div class="card-body">
 
     <h2>Sign up as a {{ user_type }}</h2>
-      <form method="post" novalidate data-validate-username-or-email-url="{% url 'validate_username_or_email' %}">
+      <form autocomplete="off" method="post" novalidate data-validate-username-or-email-url="{% url 'validate_username_or_email' %}">
         {% csrf_token %}
         <input type="hidden" name="next" value="{{ next }}">
         {{ form|crispy }}

@@ -80,7 +80,11 @@
                         </tbody>
                     </table>
                 {% else %}
+                    {% if user in marked %}
+                    <p class="lead"><br>You already have been marked</p>
+                    {% else %}
                     <p class="lead"><br>No files have been uploaded</p>
+                    {% endif %}
                 {% endif %}
             </div>
         </div>
@@ -99,6 +103,7 @@
         <div class="card-box">
             {% if user.is_student %}
             <div style="margin: 20px 0;">
+            {% if not user in senders %}
             {% if not user in marked %}
                 <button style=" background: none!important;
   border: none; color: #007bff" type="button" class="btn btn-primary js-upload-photos">
@@ -112,6 +117,7 @@
   border: none; color: #007bff" type="button" class="btn btn-primary disabled">
                     <span class="mx-2"><i class="fas fa-file-upload"></i></span>Upload new file
                 </button>
+                {% endif %}
                 {% endif %}
             </div>
             {% else %}
